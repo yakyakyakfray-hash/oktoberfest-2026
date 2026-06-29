@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Europe Trip 2026 — Group Dashboard</title>
+<style>
+:root {
+  --bg:#F2F0EA;--surface:#FFFFFF;--surface-2:#F8F7F3;--border:#E3E0D8;--border-2:#EDEBE5;
+  --text-1:#18171A;--text-2:#58564F;--text-3:#9B9890;--navy:#100D2D;--indigo:#4235C6;
+  --indigo-light:#EDEAFC;--indigo-mid:#C3BCE9;--green:#166534;--green-bg:#DCFCE7;
+  --green-border:#86EFAC;--amber:#854D0E;--amber-bg:#FEF3C7;--amber-border:#FCD34D;
+  --red:#991B1B;--red-bg:#FEE2E2;--red-border:#FCA5A5;--orange:#7C2D12;
+  --orange-border:#F97316;--teal:#134E4A;--teal-bg:#CCFBF1;--teal-border:#5EEAD4;
+  --blue:#1E3A8A;--blue-bg:#DBEAFE;--blue-border:#93C5FD;--slate:#374151;
+  --slate-bg:#F1F5F9;--slate-border:#CBD5E1;--radius-sm:6px;--radius-md:10px;
+  --radius-lg:14px;--radius-xl:20px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 14px rgba(0,0,0,.08),0 1px 4px rgba(0,0,0,.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text-1);line-height:1.55;padding:36px 20px 56px;font-size:14px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1020px;margin:0 auto;}
+a{color:var(--indigo);text-decoration:none;}a:hover{text-decoration:underline;}
+
+/* HEADER */
+.header{background:linear-gradient(140deg,#0B0926 0%,#18145A 55%,#26208A 100%);border-radius:var(--radius-xl);padding:34px 38px 30px;margin-bottom:20px;color:white;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(15,10,60,.35);}
+.header::before{content:'';position:absolute;top:-90px;right:-80px;width:340px;height:340px;background:radial-gradient(circle,rgba(255,255,255,.05) 0%,transparent 65%);border-radius:50%;pointer-events:none;}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:28px;margin-bottom:26px;position:relative;z-index:1;}
+.header-eyebrow{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:9px;}
+.header-title{font-size:28px;font-weight:700;letter-spacing:-0.5px;line-height:1.15;margin-bottom:6px;}
+.header-subtitle{font-size:13px;color:rgba(255,255,255,.5);}
+.header-kpis{display:flex;gap:32px;flex-shrink:0;}
+.header-kpi-val{font-size:34px;font-weight:700;line-height:1;letter-spacing:-1px;}
+.header-kpi-lbl{font-size:10px;font-weight:500;color:rgba(255,255,255,.38);margin-top:4px;letter-spacing:0.5px;text-transform:uppercase;}
+.route-row{display:flex;align-items:center;position:relative;z-index:1;flex-wrap:nowrap;overflow-x:auto;gap:0;scrollbar-width:none;}
+.route-row::-webkit-scrollbar{display:none;}
+.route-city{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.route-city-name{font-size:11.5px;font-weight:600;color:rgba(255,255,255,.85);white-space:nowrap;}
+.route-city-dates{font-size:9px;color:rgba(255,255,255,.35);margin-top:2px;white-space:nowrap;}
+.route-arrow{flex:1;min-width:22px;max-width:60px;display:flex;align-items:center;justify-content:center;padding:0 6px;align-self:flex-start;margin-top:5px;}
+.route-arrow svg{width:100%;height:8px;opacity:.25;}
+
+/* MAP */
+.map-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:20px;}
+.map-bar{padding:15px 22px 13px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);background:var(--surface-2);}
+.map-bar-title{font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1.2px;text-transform:uppercase;}
+.map-legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+.map-legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--text-2);}
+#trip-map{height:480px;}
+
+/* WARN BAR */
+.warn-bar{background:#FFFBF5;border:1px solid #FED7AA;border-left:3px solid #F97316;border-radius:var(--radius-md);padding:13px 17px;font-size:13px;color:#7C2D12;margin-bottom:20px;display:flex;gap:11px;align-items:flex-start;box-shadow:var(--shadow-sm);}
+.warn-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px 17px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
+.stat-plain::before{background:var(--border);}
+.stat-indigo::before{background:var(--indigo);}
+.stat-amber::before{background:#F59E0B;}
+.stat-green::before{background:#10B981;}
+.stat-label{font-size:10.5px;color:var(--text-3);margin-bottom:7px;font-weight:500;}
+.stat-value{font-size:27px;font-weight:700;color:var(--text-1);letter-spacing:-0.6px;line-height:1;}
+.stat-indigo .stat-value{color:var(--indigo);}
+.stat-amber .stat-value{color:#D97706;}
+.stat-sub{font-size:11px;color:var(--text-3);margin-top:6px;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:22px 24px;margin-bottom:16px;}
+.card-title{font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:18px;padding-bottom:13px;border-bottom:1px solid var(--border-2);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap;border:1px solid transparent;}
+.badge-green{background:var(--green-bg);color:var(--green);border-color:var(--green-border);}
+.badge-red{background:var(--red-bg);color:var(--red);border-color:var(--red-border);}
+.badge-amber{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border);}
+.badge-purple{background:var(--indigo-light);color:var(--indigo);border-color:var(--indigo-mid);}
+.badge-gray{background:var(--slate-bg);color:var(--slate);border-color:var(--slate-border);}
+
+/* CHECK ROWS */
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-2);font-size:13px;}
+.check-row:last-child{border-bottom:none;padding-bottom:0;}
+.check-box{width:18px;height:18px;border-radius:5px;border:1.5px solid #D1D5DB;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.check-box.done{background:#059669;border-color:#059669;color:white;font-weight:700;}
+.check-body{flex:1;}
+.check-name{font-weight:600;color:var(--text-1);}
+.check-detail{font-size:11.5px;color:var(--text-3);margin-top:2px;}
+
+/* DECISIONS */
+.decision{border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:10px;background:var(--surface-2);}
+.decision:last-child{margin-bottom:0;}
+.decision-q{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text-1);}
+.opts{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.opt{font-size:11.5px;padding:3px 11px;border-radius:20px;background:white;border:1px solid var(--border);color:var(--text-2);}
+.opt-rec{background:var(--indigo-light);border-color:var(--indigo-mid);color:var(--indigo);font-weight:600;}
+.decision-note{font-size:11.5px;color:var(--text-3);line-height:1.55;}
+
+/* INPUTS */
+.input-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-2);font-size:13px;}
+.input-row:last-child{border-bottom:none;padding-bottom:0;}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.dot-red{background:#EF4444;}.dot-amber{background:#F59E0B;}.dot-green{background:#10B981;}
+.input-body{flex:1;}
+.input-title{font-weight:600;color:var(--text-1);}
+.input-detail{font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.5;}
+.owner-tag{font-size:10.5px;padding:2px 9px;border-radius:20px;background:var(--slate-bg);color:var(--slate);border:1px solid var(--slate-border);white-space:nowrap;flex-shrink:0;}
+
+/* COST TABLE */
+.cost-table{width:100%;border-collapse:collapse;font-size:13px;}
+.cost-table thead th{background:var(--surface-2);padding:9px 13px;text-align:left;font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:0.6px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.cost-table thead th.r{text-align:right;}
+.cost-table tbody td{padding:10px 13px;border-bottom:1px solid var(--border-2);vertical-align:middle;}
+.cost-table tbody td.r{text-align:right;font-variant-numeric:tabular-nums;}
+.cost-table tbody td.m{color:var(--text-3);font-size:12px;}
+.cost-table tbody tr:hover td{background:var(--surface-2);}
+.cost-table tr.cat-row td{background:var(--surface-2);font-size:9.5px;font-weight:700;color:var(--text-3);letter-spacing:0.8px;text-transform:uppercase;padding:7px 13px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.cost-table tr.subtotal-row td{background:#F0EEF9;font-weight:600;font-size:12.5px;border-top:1px solid var(--indigo-mid);border-bottom:1px solid var(--indigo-mid);}
+.cost-table tr.subtotal-row td:first-child{color:var(--text-2);}
+.cost-table tr.subtotal-row td.r{color:var(--indigo);}
+.cost-table tr.total-row td{background:var(--navy);color:white;font-weight:700;font-size:14px;}
+.cost-table tr.total-row td.r{color:#A5B4FC;}
+.cost-table tr:last-child td{border-bottom:none;}
+.confirmed-amt{color:#059669;font-weight:700;}
+
+/* PER PERSON */
+.pp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.pp-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;}
+.pp-cat{font-size:11px;color:var(--text-3);margin-bottom:4px;}
+.pp-range{font-size:18px;font-weight:700;color:var(--text-1);letter-spacing:-0.4px;}
+.pp-card.confirmed{background:#F0FDF4;border-color:var(--green-border);}
+.pp-card.confirmed .pp-range{color:var(--green);}
+.total-banner{background:linear-gradient(135deg,#0B0926 0%,#18145A 100%);color:white;border-radius:var(--radius-md);padding:22px 28px;display:flex;justify-content:space-between;align-items:center;gap:24px;}
+.total-banner-left p{font-size:13.5px;font-weight:600;margin-bottom:3px;}
+.total-banner-left small{font-size:11px;color:rgba(255,255,255,.4);}
+.total-banner-right{text-align:right;}
+.total-banner-right .amount{font-size:32px;font-weight:700;line-height:1;letter-spacing:-0.5px;}
+.total-banner-right small{font-size:11px;color:rgba(255,255,255,.4);display:block;margin-top:5px;}
+
+/* ACTION ITEMS */
+.action-row{display:grid;grid-template-columns:6px 1fr auto;gap:0 14px;align-items:start;padding:13px 0;border-bottom:1px solid var(--border-2);}
+.action-row:last-child{border-bottom:none;padding-bottom:0;}
+.action-dot{width:6px;height:6px;border-radius:50%;margin-top:8px;flex-shrink:0;}
+.action-title{font-weight:700;font-size:13px;margin-bottom:3px;color:var(--text-1);}
+.action-detail{font-size:11.5px;color:var(--text-3);line-height:1.55;}
+.action-meta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.urgency{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid transparent;white-space:nowrap;letter-spacing:0.3px;}
+.urgency-now{background:var(--red-bg);color:var(--red);border-color:var(--red-border);}
+.urgency-soon{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border);}
+.urgency-later{background:var(--green-bg);color:var(--green);border-color:var(--green-border);}
+.action-who{font-size:10.5px;color:var(--text-3);}
+.note-box{background:var(--indigo-light);border:1px solid var(--indigo-mid);border-radius:var(--radius-md);padding:13px 16px;font-size:12.5px;color:#312E81;margin-top:16px;line-height:1.6;}
+
+/* DAY MATRIX */
+.mx-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:20px;}
+.mx-bar{padding:15px 22px 13px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid var(--border);background:var(--surface-2);}
+.mx-bar-title{font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1.2px;text-transform:uppercase;}
+.mx-legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+.mx-legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--text-2);}
+.mx-swatch{width:10px;height:10px;border-radius:3px;display:inline-block;flex-shrink:0;}
+.mx-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.mx-table{border-collapse:collapse;width:100%;min-width:1020px;font-size:11.5px;}
+.mx-table colgroup col:first-child{width:126px;}
+.mx-table colgroup col{width:90px;}
+.mx-thead tr{background:var(--surface-2);}
+.mx-thead th.mx-th-cat{padding:11px 13px;text-align:left;font-size:9.5px;font-weight:700;color:var(--text-3);letter-spacing:0.5px;border-bottom:1px solid var(--border);border-right:2px solid var(--border);}
+.mx-thead th.mx-th-day{padding:10px 7px;text-align:center;border-bottom:1px solid var(--border);border-right:1px solid var(--border-2);vertical-align:middle;}
+.mx-thead th.mx-th-day:last-child{border-right:none;}
+.mx-day-num{font-size:11px;font-weight:700;color:var(--text-1);}
+.mx-day-city{font-size:9px;color:var(--text-3);margin-top:2px;}
+.mx-th-day.warn .mx-day-num{color:#B91C1C;}
+.mx-th-day.warn .mx-day-city{color:#EF4444;}
+.mx-group td{font-size:9px;font-weight:800;letter-spacing:1.3px;padding:5px 13px;text-transform:uppercase;}
+.mx-g-travel td{background:#EEEFFE;color:#3730A3;border-top:1px solid #C7D2FE;border-bottom:1px solid #C7D2FE;}
+.mx-g-lodging td{background:#F0FDF4;color:#166534;border-top:1px solid #86EFAC;border-bottom:1px solid #86EFAC;}
+.mx-g-act td{background:#FFFBEB;color:#92400E;border-top:1px solid #FCD34D;border-bottom:1px solid #FCD34D;}
+.mx-label{padding:9px 13px;font-weight:600;color:var(--text-2);font-size:11px;border-right:2px solid var(--border);background:var(--surface-2);white-space:nowrap;vertical-align:middle;}
+.mx-cell{padding:9px 6px;text-align:center;vertical-align:middle;border-right:1px solid var(--border-2);border-bottom:1px solid var(--border-2);}
+.mx-cell:last-child{border-right:none;}
+.mx-row:last-child .mx-cell{border-bottom:none;}
+.mx-ct{font-size:10.5px;font-weight:600;line-height:1.3;}
+.mx-cs{font-size:9px;margin-top:2px;line-height:1.3;}
+.mx-tag{font-size:8.5px;font-weight:800;margin-top:3px;letter-spacing:0.3px;}
+.c-empty{background:var(--surface-2);}
+.c-air{background:var(--blue-bg);}.c-air .mx-ct{color:#1E3A8A;}.c-air .mx-cs{color:#2563EB;}
+.c-train{background:#EDE9FE;}.c-train .mx-ct{color:#3730A3;}.c-train .mx-cs{color:#4F46E5;}
+.c-train-warn{background:var(--red-bg);outline:2px solid #EF4444;outline-offset:-2px;}
+.c-train-warn .mx-ct{color:#7F1D1D;}.c-train-warn .mx-cs{color:#991B1B;}.c-train-warn .mx-tag{color:#DC2626;}
+.c-taxi{background:var(--teal-bg);}.c-taxi .mx-ct{color:#134E4A;}.c-taxi .mx-cs{color:#0F766E;}
+.c-shuttle{background:var(--red-bg);outline:2px solid var(--orange-border);outline-offset:-2px;}
+.c-shuttle .mx-ct{color:#7C2D12;}.c-shuttle .mx-cs{color:#9A3412;}.c-shuttle .mx-tag{color:#C2410C;}
+.c-hotel-ok{background:var(--green-bg);}.c-hotel-ok .mx-ct{color:#065F46;}.c-hotel-ok .mx-cs{color:#059669;}
+.c-hotel-tbd{background:var(--amber-bg);}.c-hotel-tbd .mx-ct{color:#78350F;}.c-hotel-tbd .mx-cs{color:#B45309;}
+.c-act-urgent{background:var(--red-bg);outline:2px solid #EF4444;outline-offset:-2px;}
+.c-act-urgent .mx-ct{color:#7F1D1D;}.c-act-urgent .mx-cs{color:#991B1B;}.c-act-urgent .mx-tag{color:#DC2626;}
+.c-oktoberfest{background:var(--amber-bg);}.c-oktoberfest .mx-ct{color:#78350F;}.c-oktoberfest .mx-cs{color:#B45309;}
+.c-act{background:var(--surface-2);}.c-act .mx-ct{color:var(--text-1);}.c-act .mx-cs{color:var(--text-3);}
+.c-alps{background:var(--blue-bg);}.c-alps .mx-ct{color:#1E3A8A;}.c-alps .mx-cs{color:#1D4ED8;}
+.c-out .mx-ct{color:var(--text-3);font-weight:400;font-size:10px;}
+
+/* ROSTER */
+.roster-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px;}
+.roster-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 15px;}
+.roster-names{font-size:13px;font-weight:700;color:var(--text-1);margin-bottom:4px;}
+.roster-tag{font-size:10.5px;color:var(--text-3);}
+.roster-card.solo{background:var(--indigo-light);border-color:var(--indigo-mid);}
+.roster-card.solo .roster-names{color:var(--indigo);}
+
+/* OKTOBERFEST TIPS */
+.tips-intro{font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:18px;padding:13px 16px;background:var(--surface-2);border-radius:var(--radius-md);border-left:3px solid var(--indigo);}
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.tip-card{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--surface);}
+.tip-header{padding:10px 15px;font-size:10.5px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;}
+.tip-body{padding:13px 15px;}
+.tip-body ul{list-style:none;padding:0;}
+.tip-body li{font-size:12.5px;color:var(--text-2);padding:4px 0 4px 16px;position:relative;line-height:1.55;}
+.tip-body li::before{content:'·';position:absolute;left:4px;color:var(--text-3);font-weight:700;}
+.tip-body strong{color:var(--text-1);}
+
+/* ESSENTIALS CHECKLIST */
+.checklist-wrap{background:var(--navy);border-radius:var(--radius-md);padding:20px 24px;}
+.checklist-title{color:rgba(255,255,255,.45);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:16px;}
+.checklist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 24px;}
+.ci{display:flex;align-items:center;gap:9px;}
+.ci input[type=checkbox]{width:15px;height:15px;accent-color:#6C63FF;cursor:pointer;flex-shrink:0;}
+.ci label{font-size:12px;color:rgba(255,255,255,.7);cursor:pointer;line-height:1.4;}
+.ci input:checked+label{text-decoration:line-through;color:rgba(255,255,255,.3);}
+
+/* MUNICH GAP */
+.gap-timeline{display:flex;flex-direction:column;}
+.gap-row{display:grid;grid-template-columns:80px 1fr;gap:16px;padding-bottom:16px;position:relative;}
+.gap-row::before{content:'';position:absolute;left:38px;top:22px;bottom:0;width:2px;background:var(--border-2);}
+.gap-row:last-child::before{display:none;}
+.gap-time{font-size:11px;font-weight:700;color:var(--indigo);padding-top:2px;text-align:right;}
+.gap-title{font-weight:600;font-size:13px;margin-bottom:3px;}
+.gap-detail{font-size:12px;color:var(--text-3);line-height:1.55;}
+
+/* HOTEL RECS */
+.hotel-recs-label{font-size:11px;font-weight:700;color:var(--text-3);letter-spacing:0.6px;text-transform:uppercase;margin:16px 0 10px;}
+.hotel-rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.hotel-rec{border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 15px;background:var(--surface-2);}
+.hotel-rec.best{border-color:var(--indigo-mid);background:var(--indigo-light);}
+.hotel-rec-name{font-weight:700;font-size:12.5px;margin-bottom:5px;}
+.hotel-rec.best .hotel-rec-name{color:var(--indigo);}
+.hotel-rec-detail{font-size:11.5px;color:var(--text-3);line-height:1.55;}
+.hotel-rec-price{font-size:12px;font-weight:700;color:var(--green);margin-top:7px;}
+
+/* RENTAL CARDS */
+.rental-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px;}
+.rental-card{border:1px solid var(--border);border-radius:var(--radius-md);padding:15px 16px;background:var(--surface-2);}
+.rental-card.best{border-color:var(--indigo-mid);background:var(--indigo-light);}
+.rental-name{font-weight:700;font-size:13px;margin-bottom:6px;}
+.rental-card.best .rental-name{color:var(--indigo);}
+.rental-detail{font-size:12px;color:var(--text-3);line-height:1.6;}
+.rental-price{font-size:13px;font-weight:700;color:var(--green);margin-top:8px;}
+
+.footer{margin-top:48px;text-align:center;font-size:11px;color:var(--text-3);line-height:2;}
+
+/* SVG MAP */
+.svgmap-wrap{background:linear-gradient(160deg,#0B0926 0%,#141041 60%,#1B1550 100%);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;margin-bottom:20px;}
+.svgmap-bar{padding:15px 22px 13px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);}
+.svgmap-bar-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:1.2px;text-transform:uppercase;}
+.svgmap-legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+.svgmap-legend-item{display:flex;align-items:center;gap:5px;font-size:10.5px;color:rgba(255,255,255,.6);}
+.svgmap{display:block;width:100%;height:auto;}
+.route-path{fill:none;stroke:#7C6CFF;stroke-width:3;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(124,108,255,.55));stroke-dasharray:2600;stroke-dashoffset:2600;animation:routedraw 2.6s ease-out .3s forwards;}
+@keyframes routedraw{to{stroke-dashoffset:0;}}
+.pin-pulse{transform-origin:center;transform-box:fill-box;animation:pinpulse 2.4s ease-in-out infinite;}
+@keyframes pinpulse{0%,100%{opacity:.55;r:7;}50%{opacity:0;r:15;}}
+.city-pin{cursor:default;}
+.map-city-label{font:700 13px -apple-system,sans-serif;fill:#fff;}
+.map-city-date{font:500 10px -apple-system,sans-serif;fill:rgba(255,255,255,.5);}
+.map-poi-label{font:600 10px -apple-system,sans-serif;fill:rgba(255,255,255,.62);}
+.map-country{font:700 12px -apple-system,sans-serif;fill:rgba(255,255,255,.08);letter-spacing:3px;}
+.map-seq{font:800 10px -apple-system,sans-serif;fill:#0B0926;}
+
+/* WEATHER / DAYLIGHT CARDS */
+.wx-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.wx-card{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;background:var(--surface-2);}
+.wx-head{padding:9px 13px;background:linear-gradient(135deg,#1B1550,#2A2188);color:#fff;}
+.wx-city{font-size:12.5px;font-weight:700;}
+.wx-when{font-size:9.5px;color:rgba(255,255,255,.55);margin-top:1px;}
+.wx-vibe{font-size:9px;font-weight:600;color:rgba(255,255,255,.8);margin-top:5px;letter-spacing:.2px;}
+.wx-body{padding:11px 13px;}
+.wx-temps{display:flex;align-items:baseline;gap:7px;margin-bottom:8px;}
+.wx-hi{font-size:21px;font-weight:700;color:var(--text-1);letter-spacing:-0.5px;}
+.wx-lo{font-size:13px;color:var(--text-3);font-weight:600;}
+.wx-cond{font-size:11px;color:var(--text-2);line-height:1.45;margin-bottom:10px;min-height:30px;}
+.wx-sun{display:flex;justify-content:space-between;font-size:10.5px;color:var(--text-3);border-top:1px solid var(--border-2);padding-top:8px;}
+.wx-sun b{color:var(--text-2);font-weight:600;}
+.wx-daylight{font-size:10px;color:var(--text-3);margin-top:5px;text-align:center;}
+.wx-note{font-size:11.5px;color:var(--text-2);margin-top:14px;padding:11px 14px;background:#FFFBF5;border:1px solid #FED7AA;border-left:3px solid #F97316;border-radius:var(--radius-md);line-height:1.55;}
+
+/* TRAIN LEG CARDS */
+.leg-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.leg-card{border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;background:var(--surface-2);position:relative;}
+.leg-card.warn{border-color:#FCA5A5;background:#FFFBFB;border-left:3px solid #EF4444;}
+.leg-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px;}
+.leg-route{font-size:13.5px;font-weight:700;color:var(--text-1);}
+.leg-num{font-size:9px;font-weight:800;letter-spacing:0.6px;color:var(--indigo);background:var(--indigo-light);border:1px solid var(--indigo-mid);border-radius:20px;padding:2px 8px;white-space:nowrap;}
+.leg-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.leg-chip{font-size:10.5px;font-weight:600;color:var(--text-2);background:#fff;border:1px solid var(--border);border-radius:5px;padding:2px 8px;}
+.leg-chip.dur{color:var(--indigo);border-color:var(--indigo-mid);background:var(--indigo-light);}
+.leg-detail{font-size:11.5px;color:var(--text-3);line-height:1.55;}
+.leg-detail a{font-weight:600;}
+
+/* TRAIN DEEP-DIVE */
+.legx{display:flex;flex-direction:column;gap:14px;}
+.legx-card{border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);overflow:hidden;box-shadow:var(--shadow-sm);}
+.legx-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:linear-gradient(135deg,#1B1550,#2A2188);color:#fff;}
+.legx-top.warn{background:linear-gradient(135deg,#3730A3,#0F766E);}
+.legx-route{font-size:15.5px;font-weight:700;letter-spacing:-0.3px;}
+.legx-num{font-size:9.5px;font-weight:800;letter-spacing:0.6px;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:3px 10px;white-space:nowrap;}
+.legx-chips{display:flex;flex-wrap:wrap;gap:6px;padding:13px 18px 3px;}
+.legx-chip{font-size:10.5px;font-weight:600;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;}
+.legx-chip.dur{color:var(--indigo);border-color:var(--indigo-mid);background:var(--indigo-light);}
+.legx-chip.speed{color:#0F6E56;border-color:#5DCAA5;background:#E7F8F1;}
+.legx-chip.good{color:#065F46;border-color:#86EFAC;background:var(--green-bg);}
+.legx-chip.vibe{color:#7C2D12;border-color:#FCD34D;background:#FFFBEB;}
+.legx-steps{padding:12px 18px 3px;display:flex;flex-direction:column;gap:7px;}
+.legx-step{display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--text-2);line-height:1.45;}
+.legx-step .s-ic{flex-shrink:0;font-weight:800;color:var(--indigo);font-size:10px;background:var(--indigo-light);border:1px solid var(--indigo-mid);border-radius:6px;padding:2px 7px;min-width:58px;text-align:center;}
+.legx-step b{color:var(--text-1);}
+.legx-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border-2);margin-top:13px;border-top:1px solid var(--border-2);}
+.legx-field{background:var(--surface);padding:10px 18px;}
+.legx-label{font-size:9px;font-weight:700;color:var(--text-3);letter-spacing:0.7px;text-transform:uppercase;margin-bottom:3px;}
+.legx-value{font-size:12px;color:var(--text-1);line-height:1.5;}
+.legx-value a{font-weight:600;}
+.legx-fact{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:#312E81;background:var(--indigo-light);border-top:1px solid var(--indigo-mid);padding:11px 18px;line-height:1.55;}
+.legx-fact .fx{flex-shrink:0;}
+@media(max-width:720px){.legx-grid{grid-template-columns:1fr;}}
+
+/* PRINT TOOLBAR */
+.toolbar{position:fixed;top:16px;right:16px;z-index:999;display:flex;gap:8px;}
+.tb-btn{font:600 12px -apple-system,sans-serif;color:#fff;background:rgba(16,13,45,.92);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 13px;cursor:pointer;box-shadow:var(--shadow-md);backdrop-filter:blur(6px);}
+.tb-btn:hover{background:#241d6b;}
+
+@media print{
+  @page{margin:14mm;}
+  body{background:#fff;padding:0;font-size:11px;}
+  .toolbar{display:none!important;}
+  .wrap{max-width:100%;}
+  .header{box-shadow:none;background:#100D2D!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .card,.mx-wrap,.svgmap-wrap,.stat,.wx-card,.leg-card{box-shadow:none;break-inside:avoid;page-break-inside:avoid;}
+  .route-path{animation:none;stroke-dashoffset:0;}
+  .pin-pulse{display:none;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  a{text-decoration:none;color:inherit;}
+  .svgmap-wrap,.mx-wrap{break-inside:avoid;}
+}
+
+@media(max-width:720px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .grid-2{grid-template-columns:1fr;}
+  .pp-grid{grid-template-columns:repeat(2,1fr);}
+  .header-top{flex-direction:column;}
+  .tips-grid{grid-template-columns:1fr;}
+  .roster-grid{grid-template-columns:repeat(2,1fr);}
+  .hotel-rec-grid,.rental-grid{grid-template-columns:1fr;}
+  .checklist-grid{grid-template-columns:repeat(2,1fr);}
+  .total-banner{flex-direction:column;}
+  .total-banner-right{text-align:left;}
+  .wx-grid{grid-template-columns:repeat(2,1fr);}
+  .leg-grid{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  body{padding:20px 12px 40px;}
+  .stats{grid-template-columns:1fr;}
+  .pp-grid{grid-template-columns:1fr;}
+  .roster-grid{grid-template-columns:1fr;}
+  .wx-grid{grid-template-columns:1fr;}
+  .checklist-grid{grid-template-columns:1fr;}
+  .header{padding:24px 20px;}
+  .header-title{font-size:23px;}
+  .header-kpis{gap:22px;}
+  .toolbar{top:auto;bottom:14px;right:14px;}
+}
+
+/* ===== INTERACTIVE: nav, filters, leaflet ===== */
+html{scroll-behavior:smooth;}
+[id]{scroll-margin-top:120px;}
+.topnav{position:sticky;top:0;z-index:60;background:rgba(11,9,38,.96);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:4px;padding:0 14px;height:46px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;}
+.topnav::-webkit-scrollbar{display:none;}
+.topnav .nv-brand{font-size:12px;font-weight:800;color:#fff;letter-spacing:.3px;margin-right:10px;white-space:nowrap;}
+.topnav a{font-size:11.5px;font-weight:600;color:rgba(255,255,255,.6);padding:5px 10px;border-radius:8px;white-space:nowrap;}
+.topnav a:hover{color:#fff;background:rgba(255,255,255,.08);text-decoration:none;}
+.filterbar{position:sticky;top:46px;z-index:59;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm);padding:9px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 -20px 20px;}
+.fgroup{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.fglabel{font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--text-3);margin-right:2px;}
+.fchip{font-size:11px;font-weight:600;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);border-radius:20px;padding:3px 11px;cursor:pointer;user-select:none;white-space:nowrap;transition:all .12s;}
+.fchip:hover{border-color:var(--indigo-mid);}
+.fchip.active{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+.fdiv{width:1px;height:20px;background:var(--border);}
+.freset{font-size:11px;font-weight:700;color:var(--indigo);background:none;border:none;cursor:pointer;padding:4px 8px;}
+.fcount{font-size:10.5px;color:var(--text-3);margin-left:auto;white-space:nowrap;}
+.f-hidden{display:none!important;}
+.mapcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:20px;}
+.mapcard .map-bar{padding:13px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--surface-2);}
+.mapcard .map-bar-title{font-size:10px;font-weight:700;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;}
+#leafmap{height:470px;width:100%;background:#0B0926;z-index:1;}
+.leaflet-popup-content{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12px;margin:10px 12px;line-height:1.5;}
+.lp-name{font-weight:800;font-size:13px;color:#100D2D;}
+.lp-dates{color:#4235C6;font-weight:700;font-size:11px;margin:2px 0 4px;}
+.lp-vibe{color:#58564F;font-size:11px;}
+.lp-btn{display:inline-block;margin-top:7px;font-size:11px;font-weight:700;color:#fff;background:#4235C6;padding:4px 10px;border-radius:6px;cursor:pointer;}
+@media print{.topnav,.filterbar{display:none!important;}}
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+</head>
+<body>
+<div class="toolbar">
+  <button class="tb-btn" id="printBtn">🖨 Print / Save PDF</button>
+</div>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-eyebrow">Group Travel · Sep 17–26, 2026 · All-In Estimate · Ground Est. + Airfare Value</div>
+      <div class="header-title">Europe Trip 2026</div>
+      <div class="header-subtitle">Munich &nbsp;·&nbsp; Salzburg &nbsp;·&nbsp; Innsbruck &nbsp;·&nbsp; Swiss Alps &nbsp;·&nbsp; ZRH in / ZRH out</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.62);margin-top:9px;letter-spacing:.2px;">🍺 Beer Hall Buzz &nbsp;·&nbsp; 🏔 Mountain Views &nbsp;·&nbsp; 🏰 Old-Town Charm &nbsp;·&nbsp; 🍻 Country Pub Vibes</div>
+    </div>
+    <div class="header-kpis">
+      <div><div class="header-kpi-val">7</div><div class="header-kpi-lbl">Travelers</div></div>
+      <div><div class="header-kpi-val">10</div><div class="header-kpi-lbl">Days</div></div>
+      <div><div class="header-kpi-val">5</div><div class="header-kpi-lbl">Cities</div></div>
+    </div>
+  </div>
+  <div class="route-row">
+    <div class="route-city"><div class="route-city-name">Zürich</div><div class="route-city-dates">Sep 17–18</div></div>
+    <div class="route-arrow"><svg viewBox="0 0 40 8" fill="none"><line x1="0" y1="4" x2="33" y2="4" stroke="white" stroke-width="1"/><polyline points="28,1 35,4 28,7" stroke="white" stroke-width="1" fill="none"/></svg></div>
+    <div class="route-city"><div class="route-city-name">Munich</div><div class="route-city-dates">Sep 18–21</div></div>
+    <div class="route-arrow"><svg viewBox="0 0 40 8" fill="none"><line x1="0" y1="4" x2="33" y2="4" stroke="white" stroke-width="1"/><polyline points="28,1 35,4 28,7" stroke="white" stroke-width="1" fill="none"/></svg></div>
+    <div class="route-city"><div class="route-city-name">Salzburg</div><div class="route-city-dates">Sep 21–23</div></div>
+    <div class="route-arrow"><svg viewBox="0 0 40 8" fill="none"><line x1="0" y1="4" x2="33" y2="4" stroke="white" stroke-width="1"/><polyline points="28,1 35,4 28,7" stroke="white" stroke-width="1" fill="none"/></svg></div>
+    <div class="route-city"><div class="route-city-name">Innsbruck</div><div class="route-city-dates">Sep 23–24</div></div>
+    <div class="route-arrow"><svg viewBox="0 0 40 8" fill="none"><line x1="0" y1="4" x2="33" y2="4" stroke="white" stroke-width="1"/><polyline points="28,1 35,4 28,7" stroke="white" stroke-width="1" fill="none"/></svg></div>
+    <div class="route-city"><div class="route-city-name">Swiss Alps</div><div class="route-city-dates">Sep 24–25</div></div>
+    <div class="route-arrow"><svg viewBox="0 0 40 8" fill="none"><line x1="0" y1="4" x2="33" y2="4" stroke="white" stroke-width="1"/><polyline points="28,1 35,4 28,7" stroke="white" stroke-width="1" fill="none"/></svg></div>
+    <div class="route-city"><div class="route-city-name">Zürich ✈</div><div class="route-city-dates">Sep 25–26</div></div>
+  </div>
+</div>
+
+<div class="topnav">
+  <span class="nv-brand">🍺 Oktoberfest 2026</span>
+  <a href="#map">Map</a><a href="#glance">Day-by-Day</a><a href="#destinations">Destinations</a><a href="#climate">Weather</a><a href="#trains">Trains</a><a href="#bookings">Bookings</a><a href="#oktoberfest">Oktoberfest</a><a href="#roster">Roster</a><a href="#costs">Costs</a><a href="#ledger">Ledger</a><a href="#actions">To-Dos</a>
+</div>
+<div class="filterbar">
+  <div class="fgroup"><span class="fglabel">Where</span><span class="fchip" data-dim="loc" data-val="zurich">Zürich</span><span class="fchip" data-dim="loc" data-val="munich">Munich</span><span class="fchip" data-dim="loc" data-val="salzburg">Salzburg</span><span class="fchip" data-dim="loc" data-val="innsbruck">Innsbruck</span><span class="fchip" data-dim="loc" data-val="alps">Swiss Alps</span></div>
+  <div class="fdiv"></div>
+  <div class="fgroup"><span class="fglabel">When</span><span class="fchip" data-dim="day" data-val="17">9/17</span><span class="fchip" data-dim="day" data-val="18">9/18</span><span class="fchip" data-dim="day" data-val="19">9/19</span><span class="fchip" data-dim="day" data-val="20">9/20</span><span class="fchip" data-dim="day" data-val="21">9/21</span><span class="fchip" data-dim="day" data-val="22">9/22</span><span class="fchip" data-dim="day" data-val="23">9/23</span><span class="fchip" data-dim="day" data-val="24">9/24</span><span class="fchip" data-dim="day" data-val="25">9/25</span><span class="fchip" data-dim="day" data-val="26">9/26</span></div>
+  <div class="fdiv"></div>
+  <div class="fgroup"><span class="fglabel">Type</span><span class="fchip" data-dim="cat" data-val="travel">Travel</span><span class="fchip" data-dim="cat" data-val="lodging">Lodging</span><span class="fchip" data-dim="cat" data-val="activities">Activities</span><span class="fchip" data-dim="cat" data-val="cost">Cost</span><span class="fchip" data-dim="cat" data-val="info">Info</span></div>
+  <button class="freset" id="freset">Reset ✕</button><span class="fcount" id="fcount"></span>
+</div>
+
+<!-- INTERACTIVE LEAFLET MAP -->
+<div class="mapcard" id="map">
+  <div class="map-bar"><div class="map-bar-title">🗺 Interactive Route Map — tap a city to filter the page</div><div class="map-bar-title" style="text-transform:none;letter-spacing:.2px;">Zürich → Munich → Salzburg → Innsbruck → Swiss Alps → Zürich</div></div>
+  <div id="leafmap"></div>
+</div>
+
+<!-- DAY MATRIX -->
+<div class="mx-wrap">
+  <div class="mx-bar">
+    <div class="mx-bar-title">Trip at a Glance — Day by Day</div>
+    <div class="mx-legend">
+      <span class="mx-legend-item"><span class="mx-swatch" style="background:#D1FAE5;border:1px solid #86EFAC;"></span>Confirmed</span>
+      <span class="mx-legend-item"><span class="mx-swatch" style="background:#FEF3C7;border:1px solid #FCD34D;"></span>Planned / TBD</span>
+      <span class="mx-legend-item"><span class="mx-swatch" style="background:#FEE2E2;border:1.5px solid #F97316;"></span>Needs action</span>
+      <span class="mx-legend-item"><span class="mx-swatch" style="background:#EDE9FE;border:1px solid #C3BCE9;"></span>Train</span>
+      <span class="mx-legend-item"><span class="mx-swatch" style="background:#DBEAFE;border:1px solid #93C5FD;"></span>Air / Alps</span>
+      <span class="mx-legend-item"><span class="mx-swatch" style="background:#CCFBF1;border:1px solid #5EEAD4;"></span>Taxi / Uber</span>
+    </div>
+  </div>
+  <div class="mx-scroll">
+  <table class="mx-table">
+    <colgroup><col><col><col><col><col><col><col><col><col><col><col></colgroup>
+    <thead class="mx-thead">
+      <tr>
+        <th class="mx-th-cat">Category</th>
+        <th class="mx-th-day"><div class="mx-day-num">Thu 9/17</div><div class="mx-day-city">Zürich</div></th>
+        <th class="mx-th-day"><div class="mx-day-num">Fri 9/18</div><div class="mx-day-city">→ Munich</div></th>
+        <th class="mx-th-day"><div class="mx-day-num">Sat 9/19</div><div class="mx-day-city">Munich</div></th>
+        <th class="mx-th-day"><div class="mx-day-num">Sun 9/20</div><div class="mx-day-city">Munich</div></th>
+        <th class="mx-th-day"><div class="mx-day-num">Mon 9/21</div><div class="mx-day-city">→ Salzburg</div></th>
+        <th class="mx-th-day"><div class="mx-day-num">Tue 9/22</div><div class="mx-day-city">Salzburg</div></th>
+        <th class="mx-th-day"><div class="mx-day-num">Wed 9/23</div><div class="mx-day-city">→ Innsbruck</div></th>
+        <th class="mx-th-day warn"><div class="mx-day-num">Thu 9/24 ⚠</div><div class="mx-day-city">→ Lauterbr.</div></th>
+        <th class="mx-th-day"><div class="mx-day-num">Fri 9/25</div><div class="mx-day-city">Alps → ZRH</div></th>
+        <th class="mx-th-day" style="border-right:none;"><div class="mx-day-num">Sat 9/26</div><div class="mx-day-city">Depart ZRH</div></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="mx-group mx-g-travel"><td colspan="11">TRAVEL</td></tr>
+      <tr class="mx-row">
+        <td class="mx-label">✈ Air</td>
+        <td class="mx-cell c-air"><div class="mx-ct">Land ZRH</div><div class="mx-cs">UA52 · 8:05am</div></td>
+        <td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td>
+        <td class="mx-cell c-air"><div class="mx-ct">Depart ZRH</div><div class="mx-cs">13:25 · (private)</div></td>
+      </tr>
+      <tr class="mx-row">
+        <td class="mx-label">🚕 Taxi / Uber</td>
+        <td class="mx-cell c-taxi"><div class="mx-ct">Walk / taxi</div><div class="mx-cs">HBF → hotel</div></td>
+        <td class="mx-cell c-empty"></td>
+        <td class="mx-cell c-taxi"><div class="mx-ct">Walk to Wiesn</div><div class="mx-cs">no Uber today</div></td>
+        <td class="mx-cell c-taxi"><div class="mx-ct">Walk to Wiesn</div><div class="mx-cs">no Uber today</div></td>
+        <td class="mx-cell c-taxi"><div class="mx-ct">Optional</div><div class="mx-cs">Hbf → hotel</div></td>
+        <td class="mx-cell c-empty"></td>
+        <td class="mx-cell c-taxi"><div class="mx-ct">Walk 10 min</div><div class="mx-cs">Hbf → Old Town</div></td>
+        <td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td>
+        <td class="mx-cell c-taxi"><div class="mx-ct">Hotel → ZRH</div><div class="mx-cs">S-Bahn / taxi</div></td>
+      </tr>
+      <tr class="mx-row">
+        <td class="mx-label">🚆 Train</td>
+        <td class="mx-cell c-train"><div class="mx-ct">ZRH Airport</div><div class="mx-cs">→ HBF · 12 min</div></td>
+        <td class="mx-cell c-train"><div class="mx-ct">ZRH → MUC</div><div class="mx-cs">3h 40m · Astoro</div></td>
+        <td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td>
+        <td class="mx-cell c-train"><div class="mx-ct">MUC → SZG</div><div class="mx-cs">1h 28m · Railjet</div></td>
+        <td class="mx-cell c-empty"></td>
+        <td class="mx-cell c-train"><div class="mx-ct">SZG → IBK</div><div class="mx-cs">1h 48m · Railjet</div></td>
+        <td class="mx-cell c-train"><div class="mx-ct">IBK → LAU</div><div class="mx-cs">~7h · 2 chg · train-only</div><div class="mx-tag">LONG DAY</div></td>
+        <td class="mx-cell c-train"><div class="mx-ct">LAU → ZRH</div><div class="mx-cs">2h 30m · STP</div></td>
+        <td class="mx-cell c-empty"></td>
+      </tr>
+      <tr class="mx-row">
+        <td class="mx-label">🚐 Private Shuttle</td>
+        <td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td>
+        <td class="mx-cell c-shuttle"><div class="mx-ct">SZG ↔ Eagle's Nest</div><div class="mx-cs">Full day · $530–$820</div><div class="mx-tag">BOOK NOW</div></td>
+        <td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td>
+      </tr>
+      <tr class="mx-group mx-g-lodging"><td colspan="11">LODGING</td></tr>
+      <tr class="mx-row">
+        <td class="mx-label">🏨 Hotel</td>
+        <td class="mx-cell c-hotel-tbd"><div class="mx-ct">Zürich</div><div class="mx-cs">TBD — see recs</div></td>
+        <td class="mx-cell c-hotel-ok"><div class="mx-ct">Munich ✓</div><div class="mx-cs">Homaris booked</div></td>
+        <td class="mx-cell c-hotel-ok"><div class="mx-ct">Munich ✓</div><div class="mx-cs">Homaris booked</div></td>
+        <td class="mx-cell c-hotel-ok"><div class="mx-ct">Munich ✓</div><div class="mx-cs">Homaris booked</div></td>
+        <td class="mx-cell c-hotel-tbd"><div class="mx-ct">Salzburg</div><div class="mx-cs">TBD</div></td>
+        <td class="mx-cell c-hotel-tbd"><div class="mx-ct">Salzburg</div><div class="mx-cs">TBD</div></td>
+        <td class="mx-cell c-hotel-tbd"><div class="mx-ct">Innsbruck</div><div class="mx-cs">TBD</div></td>
+        <td class="mx-cell c-hotel-tbd"><div class="mx-ct">Lauterbr.</div><div class="mx-cs">TBD</div></td>
+        <td class="mx-cell c-hotel-tbd"><div class="mx-ct">Zürich</div><div class="mx-cs">TBD</div></td>
+        <td class="mx-cell c-out"><div class="mx-ct">Check out</div></td>
+      </tr>
+      <tr class="mx-group mx-g-act"><td colspan="11">ACTIVITIES</td></tr>
+      <tr class="mx-row">
+        <td class="mx-label">🦅 Eagle's Nest</td>
+        <td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td>
+        <td class="mx-cell c-act-urgent"><div class="mx-ct">Eagle's Nest</div><div class="mx-cs">Full day · TBD</div><div class="mx-tag">BOOK NOW</div></td>
+        <td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td><td class="mx-cell c-empty"></td>
+      </tr>
+      <tr class="mx-row">
+        <td class="mx-label">✨ Other ideas</td>
+        <td class="mx-cell c-act"><div class="mx-ct">Old Town</div><div class="mx-cs">Lake Zürich</div></td>
+        <td class="mx-cell c-act"><div class="mx-ct">Marienplatz</div><div class="mx-cs">Viktualienmarkt</div></td>
+        <td class="mx-cell c-oktoberfest"><div class="mx-ct">Oktoberfest 🍺</div><div class="mx-cs">Opening Day</div></td>
+        <td class="mx-cell c-oktoberfest"><div class="mx-ct">Oktoberfest 🍺</div><div class="mx-cs">Day 2</div></td>
+        <td class="mx-cell c-act"><div class="mx-ct">Mirabell Gdns</div><div class="mx-cs">Old Town · Fortress</div></td>
+        <td class="mx-cell c-taxi"><div class="mx-ct">Königssee?</div><div class="mx-cs">optional add-on</div></td>
+        <td class="mx-cell c-act"><div class="mx-ct">Golden Roof</div><div class="mx-cs">Nordkette (wx)</div></td>
+        <td class="mx-cell c-act"><div class="mx-ct">Village stroll</div><div class="mx-cs">Staubbach Falls</div></td>
+        <td class="mx-cell c-alps"><div class="mx-ct">Alps AM</div><div class="mx-cs">Männlichen / Mürren</div></td>
+        <td class="mx-cell c-out"><div class="mx-ct">Fly out</div></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat stat-plain">
+    <div class="stat-label">Hotels booked</div>
+    <div class="stat-value">1 / 6</div>
+    <div class="stat-sub">Munich confirmed · 5 TBD · Flights ✓</div>
+  </div>
+  <div class="stat stat-indigo">
+    <div class="stat-label">Munich hotel (confirmed)</div>
+    <div class="stat-value">$5,172</div>
+    <div class="stat-sub">$738.79 / person · Homaris (private)</div>
+  </div>
+  <div class="stat stat-amber">
+    <div class="stat-label">Estimated total (group)</div>
+    <div class="stat-value">$21–28K</div>
+    <div class="stat-sub">All-in incl. airfare value · see breakdown</div>
+  </div>
+  <div class="stat stat-plain">
+    <div class="stat-label">Open decisions</div>
+    <div class="stat-value">5</div>
+    <div class="stat-sub">Group input needed now</div>
+  </div>
+</div>
+
+<!-- WARNING -->
+<div class="warn-bar">
+  <div class="warn-icon">⚠</div>
+  <div><strong>Sep 24 (Innsbruck → Lauterbrunnen)</strong> is the long day — but it's <strong>train-only</strong>. The Sargans↔Feldkirch bus replacement (Jun 14–Oct 14, 2026) only affects local traffic; the through Innsbruck→Zürich Railjet is <strong>diverted as a train via St. Gallen</strong> (~1h slower, 4h12). Plan: <strong>09:16 Railjet → Zürich → direct IC to Interlaken Ost → BOB to Lauterbrunnen</strong> · 2 changes · ~7h · no bus. Re-verify times on <a href="https://www.sbb.ch" target="_blank">SBB.ch</a> when Sept schedules firm up.</div>
+</div>
+
+<!-- DESTINATIONS — WHY EACH STOP -->
+<div class="card">
+  <div class="card-title">🌍 Destinations — Why Each Stop</div>
+  <div class="input-row"><div class="dot" style="background:#5DCAA5;"></div><div class="input-body"><div class="input-title">Zürich · Switzerland</div><div class="input-detail">Arrival & jet-lag recovery, Old Town / Lake Zürich</div><div class="opts" style="margin-top:7px;"><span class="opt">🏞 Lakeside Strolls</span><span class="opt">🍫 Swiss Cosmopolitan</span><span class="opt">😌 Easy Reset Day</span></div></div><span class="owner-tag">Sep 17–18</span></div>
+  <div class="input-row"><div class="dot" style="background:#7F77DD;"></div><div class="input-body"><div class="input-title">Munich · Germany</div><div class="input-detail">Oktoberfest · meet up with Caroline &amp; Anton (Munich friends joining the group for Oktoberfest — <strong>address TBD</strong>)</div><div class="opts" style="margin-top:7px;"><span class="opt">🍺 Beer Hall Buzz</span><span class="opt">🥨 Bavarian Classics</span><span class="opt">🎡 Oktoberfest Energy</span></div></div><span class="owner-tag">Sep 18–21</span></div>
+  <div class="input-row"><div class="dot" style="background:#FAC775;"></div><div class="input-body"><div class="input-title">Salzburg · Austria</div><div class="input-detail">Old Town &amp; Mirabell · Eagle's Nest day trip base</div><div class="opts" style="margin-top:7px;"><span class="opt">🏰 Baroque Old Town</span><span class="opt">🎼 Sound of Music</span><span class="opt">🍺 Country Pub Vibes</span></div></div><span class="owner-tag">Sep 21–23</span></div>
+  <div class="input-row"><div class="dot" style="background:#FAC775;"></div><div class="input-body"><div class="input-title">Innsbruck · Austria</div><div class="input-detail">Golden Roof / Old Town · Nordkette cable car</div><div class="opts" style="margin-top:7px;"><span class="opt">🏔 Mountain Backdrop</span><span class="opt">🚠 Cable-Car Views</span><span class="opt">🍻 Tyrolean Charm</span></div></div><span class="owner-tag">Sep 23–24</span></div>
+  <div class="input-row"><div class="dot" style="background:#5DCAA5;"></div><div class="input-body"><div class="input-title">Swiss Alps (Lauterbrunnen) · Switzerland</div><div class="input-detail">Alpine hiking &amp; views — Männlichen / Mürren, Staubbach Falls</div><div class="opts" style="margin-top:7px;"><span class="opt">🏔 Mountain Views</span><span class="opt">💧 Waterfall Valley</span><span class="opt">📖 Storybook Alps</span></div></div><span class="owner-tag">Sep 24–25</span></div>
+  <div class="input-row"><div class="dot" style="background:#5DCAA5;"></div><div class="input-body"><div class="input-title">Zürich · Switzerland</div><div class="input-detail">Final night before the Sep 26 flight home</div><div class="opts" style="margin-top:7px;"><span class="opt">🌉 Riverside Strolls</span><span class="opt">🍷 Last-Night Dinner</span><span class="opt">✈ Easy Airport Access</span></div></div><span class="owner-tag">Sep 25–26</span></div>
+</div>
+
+<!-- CLIMATE & DAYLIGHT -->
+<div class="card">
+  <div class="card-title">🌤 Climate & Daylight — What to Expect (Late September)</div>
+  <div class="wx-grid">
+    <div class="wx-card">
+      <div class="wx-head"><div class="wx-city">Zürich</div><div class="wx-when">Sep 17 · 25–26</div><div class="wx-vibe">🏞 Lakeside Reset</div></div>
+      <div class="wx-body">
+        <div class="wx-temps"><span class="wx-hi">19°C / 66°F</span><span class="wx-lo">low 11°C / 52°F</span></div>
+        <div class="wx-cond">Mild but damp — roughly 10 rainy days in Sep. Pack a light rain layer.</div>
+        <div class="wx-sun"><span>☀ <b>07:05</b></span><span><b>19:35</b> 🌙</span></div>
+        <div class="wx-daylight">12h 30m daylight</div>
+      </div>
+    </div>
+    <div class="wx-card">
+      <div class="wx-head"><div class="wx-city">Munich</div><div class="wx-when">Sep 18–21</div><div class="wx-vibe">🍺 Beer Hall Buzz</div></div>
+      <div class="wx-body">
+        <div class="wx-temps"><span class="wx-hi">19°C / 66°F</span><span class="wx-lo">low 9°C / 48°F</span></div>
+        <div class="wx-cond">Crisp mornings, pleasant afternoons. Opening-weekend Wiesn can catch a shower.</div>
+        <div class="wx-sun"><span>☀ <b>06:55</b></span><span><b>19:19</b> 🌙</span></div>
+        <div class="wx-daylight">12h 23m daylight</div>
+      </div>
+    </div>
+    <div class="wx-card">
+      <div class="wx-head"><div class="wx-city">Salzburg</div><div class="wx-when">Sep 21–23</div><div class="wx-vibe">🏰 Baroque & Pubs</div></div>
+      <div class="wx-body">
+        <div class="wx-temps"><span class="wx-hi">18°C / 64°F</span><span class="wx-lo">low 8°C / 46°F</span></div>
+        <div class="wx-cond">One of Austria's rainiest cities — bring an umbrella. Cool evenings.</div>
+        <div class="wx-sun"><span>☀ <b>06:54</b></span><span><b>19:07</b> 🌙</span></div>
+        <div class="wx-daylight">12h 13m daylight</div>
+      </div>
+    </div>
+    <div class="wx-card">
+      <div class="wx-head"><div class="wx-city">Innsbruck</div><div class="wx-when">Sep 23–24</div><div class="wx-vibe">🏔 Mountain Backdrop</div></div>
+      <div class="wx-body">
+        <div class="wx-temps"><span class="wx-hi">20°C / 68°F</span><span class="wx-lo">low 9°C / 48°F</span></div>
+        <div class="wx-cond">Sunny valley, but the Nordkette summit is far colder — layers essential.</div>
+        <div class="wx-sun"><span>☀ <b>07:02</b></span><span><b>19:11</b> 🌙</span></div>
+        <div class="wx-daylight">12h 09m daylight</div>
+      </div>
+    </div>
+    <div class="wx-card">
+      <div class="wx-head"><div class="wx-city">Swiss Alps</div><div class="wx-when">Sep 24–25</div><div class="wx-vibe">🏔 Storybook Alps</div></div>
+      <div class="wx-body">
+        <div class="wx-temps"><span class="wx-hi">17°C / 63°F</span><span class="wx-lo">low 8°C / 46°F</span></div>
+        <div class="wx-cond">Cold valley mornings; near-freezing with possible snow up high (Männlichen / Jungfrau).</div>
+        <div class="wx-sun"><span>☀ <b>07:17</b></span><span><b>19:23</b> 🌙</span></div>
+        <div class="wx-daylight">12h 06m daylight</div>
+      </div>
+    </div>
+  </div>
+  <div class="wx-note"><strong>Packing takeaway:</strong> mid-to-high teens °C by day (≈63–68°F), single digits at night (≈46–52°F), real rain risk in Salzburg & Zürich, and genuine alpine cold above 2,000 m. Bring layers, a packable rain shell, and warm gear for the Sep 23 Nordkette and Sep 25 Männlichen mountain mornings. Daylight is ~12¼ hours and shrinking ~3 min/day — front-load outdoor activities before ~18:30.</div>
+</div>
+
+<!-- TRAIN LEGS — DEEP DIVE -->
+<div class="card">
+  <div class="card-title">🚆 Train Legs — Deep Dive (5 Intercity Connections)</div>
+  <div class="warn-bar" style="margin:0 0 16px;box-shadow:none;background:#F0FDF4;border-color:#86EFAC;border-left-color:#10B981;color:#065F46;">
+    <div class="warn-icon">✅</div>
+    <div><strong>The "hard day" is train-only:</strong> Leg 4 has no buses. The Sargans↔Feldkirch bus replacement only affects local traffic — the through Innsbruck→Zürich Railjet is <strong>diverted as a train</strong> via St. Gallen (~1h slower). Full routing in Leg 4 below.</div>
+  </div>
+  <div class="legx">
+
+    <!-- LEG 1 -->
+    <div class="legx-card">
+      <div class="legx-top"><div class="legx-route">Zürich → Munich</div><span class="legx-num">LEG 1 · FRI SEP 18</span></div>
+      <div class="legx-chips"><span class="legx-chip dur">3h 30–32m</span><span class="legx-chip">EuroCity-Express</span><span class="legx-chip good">Direct · 0 changes</span><span class="legx-chip speed">⚡ 155 mph (250 km/h)</span><span class="legx-chip vibe">🏞 Lake &amp; Allgäu scenery</span></div>
+      <div class="legx-grid">
+        <div class="legx-field"><div class="legx-label">From</div><div class="legx-value"><strong>Zürich HB</strong> · Bahnhofplatz, 8001 Zürich</div></div>
+        <div class="legx-field"><div class="legx-label">To</div><div class="legx-value"><strong>München Hbf</strong> · Bayerstraße 10A, 80335 München</div></div>
+        <div class="legx-field"><div class="legx-label">Operator</div><div class="legx-value">SBB + DB joint (ECE) · up to 8/day</div></div>
+        <div class="legx-field"><div class="legx-label">Book &amp; manage</div><div class="legx-value"><a href="https://www.bahn.de" target="_blank">DB Navigator</a> or <a href="https://www.sbb.ch" target="_blank">SBB Mobile</a> · Apple Wallet</div></div>
+        <div class="legx-field"><div class="legx-label">Fare by class (advance)</div><div class="legx-value">2nd from <strong>€21.90</strong> · 1st from <strong>€31.90</strong> (Sparpreis)</div></div>
+        <div class="legx-field"><div class="legx-label">Route &amp; group note</div><div class="legx-value">Via St. Gallen–Bregenz–Lindau–Memmingen — ✅ unaffected by 2026 works. Reserve 7 seats; busy Fridays. Depart ~08:30 to beat the 4 PM Homaris check-in.</div></div>
+      </div>
+      <div class="legx-fact"><span class="fx">💡</span><div><b>Cool fact:</b> the bullet-nosed <b>ETR610 "Astoro"</b> tilts into curves so it can hold speed through the Alpine foothills — restaurant car, free WiFi and a power socket at every seat.</div></div>
+    </div>
+
+    <!-- LEG 2 -->
+    <div class="legx-card">
+      <div class="legx-top"><div class="legx-route">Munich → Salzburg</div><span class="legx-num">LEG 2 · MON SEP 21</span></div>
+      <div class="legx-chips"><span class="legx-chip dur">1h 28m</span><span class="legx-chip">ÖBB Railjet (or DB EC 1h42)</span><span class="legx-chip good">Direct · 0 changes</span><span class="legx-chip speed">⚡ 143 mph (230 km/h)</span><span class="legx-chip vibe">🍺 Beer-to-baroque hop</span></div>
+      <div class="legx-grid">
+        <div class="legx-field"><div class="legx-label">From</div><div class="legx-value"><strong>München Hbf</strong> · Bayerstraße 10A, 80335 München</div></div>
+        <div class="legx-field"><div class="legx-label">To</div><div class="legx-value"><strong>Salzburg Hbf</strong> · Südtiroler Platz 1, 5020 Salzburg</div></div>
+        <div class="legx-field"><div class="legx-label">Operator</div><div class="legx-value">DB (EC) or ÖBB (Railjet) · ~hourly, ~40/day</div></div>
+        <div class="legx-field"><div class="legx-label">Book &amp; manage</div><div class="legx-value"><a href="https://www.bahn.de" target="_blank">DB Navigator</a> or <a href="https://www.oebb.at" target="_blank">ÖBB app</a> (SparSchiene cheapest)</div></div>
+        <div class="legx-field"><div class="legx-label">Fare by class (advance)</div><div class="legx-value">2nd from <strong>€17.99</strong> · 1st from <strong>€23.99</strong></div></div>
+        <div class="legx-field"><div class="legx-label">Group note</div><div class="legx-value">Assigned seating on Railjet — book the 7 together. Easiest leg of the trip.</div></div>
+      </div>
+      <div class="legx-fact"><span class="fx">💡</span><div><b>Cool fact:</b> the cheapest, easiest border-crossing of the whole route — a train links the two cities roughly <b>every hour</b> in each direction.</div></div>
+    </div>
+
+    <!-- LEG 3 -->
+    <div class="legx-card">
+      <div class="legx-top"><div class="legx-route">Salzburg → Innsbruck</div><span class="legx-num">LEG 3 · WED SEP 23</span></div>
+      <div class="legx-chips"><span class="legx-chip dur">1h 48m</span><span class="legx-chip">ÖBB Railjet</span><span class="legx-chip good">Direct · 0 changes</span><span class="legx-chip speed">⚡ 143 mph (230 km/h)</span><span class="legx-chip vibe">🏔 Tyrolean valley views</span></div>
+      <div class="legx-grid">
+        <div class="legx-field"><div class="legx-label">From</div><div class="legx-value"><strong>Salzburg Hbf</strong> · Südtiroler Platz 1, 5020 Salzburg</div></div>
+        <div class="legx-field"><div class="legx-label">To</div><div class="legx-value"><strong>Innsbruck Hbf</strong> · Südtiroler Platz 7, 6020 Innsbruck</div></div>
+        <div class="legx-field"><div class="legx-label">Operator</div><div class="legx-value">ÖBB · hourly Railjet service</div></div>
+        <div class="legx-field"><div class="legx-label">Book &amp; manage</div><div class="legx-value"><a href="https://www.oebb.at" target="_blank">ÖBB app</a> · SparSchiene advance fares</div></div>
+        <div class="legx-field"><div class="legx-label">Fare by class (advance)</div><div class="legx-value">2nd from <strong>€29.90</strong> · 1st from <strong>€44.90</strong> · Business <strong>€59.90</strong></div></div>
+        <div class="legx-field"><div class="legx-label">Group note</div><div class="legx-value">Sit on the <strong>left</strong> for the best mountain views. Reserve the 7 together.</div></div>
+      </div>
+      <div class="legx-fact"><span class="fx">💡</span><div><b>Cool fact:</b> this is a <b>Korridorzug</b> — it short-cuts through Germany past Kufstein castle for about an hour, yet is still ticketed as an Austrian domestic train.</div></div>
+    </div>
+
+    <!-- LEG 4 -->
+    <div class="legx-card">
+      <div class="legx-top warn"><div class="legx-route">Innsbruck → Lauterbrunnen</div><span class="legx-num">LEG 4 · THU SEP 24 · TRAIN-ONLY ✓</span></div>
+      <div class="legx-chips"><span class="legx-chip dur">~7h door-to-door</span><span class="legx-chip good">2 changes · no bus ✓</span><span class="legx-chip">Railjet + IC + BOB</span><span class="legx-chip">↪ diverted via St. Gallen</span><span class="legx-chip vibe">☕ Snacks-&amp;-podcasts haul</span></div>
+      <div class="legx-steps">
+        <div class="legx-step"><span class="s-ic">09:16</span><div><b>Innsbruck Hbf → Zürich HB</b> — diverted direct Railjet via Bregenz/St. Gallen · <b>4h12</b> (arr ~13:28). Other deps: 04:53, 15:16.</div></div>
+        <div class="legx-step"><span class="s-ic">change</span><div><b>Zürich HB → Interlaken Ost</b> — direct SBB InterCity · ~1h52</div></div>
+        <div class="legx-step"><span class="s-ic">change</span><div><b>Interlaken Ost → Lauterbrunnen</b> — BOB narrow-gauge · ~20 min (arr ~16:00)</div></div>
+      </div>
+      <div class="legx-grid">
+        <div class="legx-field"><div class="legx-label">Why no bus</div><div class="legx-value">The bus replacement only covers the <strong>local</strong> Sargans↔Feldkirch segment (closed Jun 14–Oct 14, 2026). Through Railjets are <strong>diverted as trains</strong> via St. Margrethen/St. Gallen — you stay on rails.</div></div>
+        <div class="legx-field"><div class="legx-label">End station</div><div class="legx-value"><strong>Lauterbrunnen</strong> · 3822 Lauterbrunnen (village-centre station)</div></div>
+        <div class="legx-field"><div class="legx-label">Operator</div><div class="legx-value">ÖBB Railjet (IBK→ZRH) + SBB (Swiss legs)</div></div>
+        <div class="legx-field"><div class="legx-label">Book &amp; manage</div><div class="legx-value">IBK→ZRH on <a href="https://www.oebb.at" target="_blank">ÖBB app</a> (SparSchiene); Swiss legs on the <a href="https://www.sbb.ch" target="_blank">Swiss Travel Pass</a> / SBB Mobile</div></div>
+        <div class="legx-field"><div class="legx-label">Fare by class</div><div class="legx-value">RJX IBK→ZRH 2nd from ~<strong>€39.90</strong> · Swiss legs <strong>covered by Swiss Travel Pass</strong></div></div>
+        <div class="legx-field"><div class="legx-label">Plan note</div><div class="legx-value">Take the <strong>09:16</strong> — earlier than the old 07:00 worry, and still in Lauterbrunnen by ~16:00. Re-verify exact times on SBB once Sept timetables firm up.</div></div>
+      </div>
+      <div class="legx-fact"><span class="fx">💡</span><div><b>Cool fact:</b> the St. Gallen detour is a hidden upgrade — it runs you along <b>Lake Constance (Bodensee)</b> for views you'd miss on the normal route. Pack snacks and download something offline; it's the one long sit of the trip.</div></div>
+    </div>
+
+    <!-- LEG 5 -->
+    <div class="legx-card">
+      <div class="legx-top"><div class="legx-route">Lauterbrunnen → Zürich</div><span class="legx-num">LEG 5 · FRI SEP 25</span></div>
+      <div class="legx-chips"><span class="legx-chip dur">~2h 30–50m</span><span class="legx-chip">BOB + InterCity</span><span class="legx-chip">1–2 changes</span><span class="legx-chip good">Swiss Pass ✓</span><span class="legx-chip vibe">🏞 Alpine farewell ride</span></div>
+      <div class="legx-grid">
+        <div class="legx-field"><div class="legx-label">Route</div><div class="legx-value"><strong>Lauterbrunnen → Interlaken Ost → (Bern) → Zürich HB</strong></div></div>
+        <div class="legx-field"><div class="legx-label">Operator</div><div class="legx-value">BOB (mountain leg) + SBB InterCity</div></div>
+        <div class="legx-field"><div class="legx-label">Book &amp; manage</div><div class="legx-value"><strong>Covered by Swiss Travel Pass</strong> — just board · <a href="https://www.sbb.ch" target="_blank">SBB Mobile</a> for live times</div></div>
+        <div class="legx-field"><div class="legx-label">Fare by class</div><div class="legx-value">Included in Swiss Travel Pass (2nd class)</div></div>
+        <div class="legx-field"><div class="legx-label">Timing</div><div class="legx-value">Leave by ~midday after the Alps morning to reach ZRH comfortably for the Sep 26 flight.</div></div>
+        <div class="legx-field"><div class="legx-label">Daily frequency</div><div class="legx-value">30+ connections/day · BOB every 30 min</div></div>
+      </div>
+      <div class="legx-fact"><span class="fx">💡</span><div><b>Cool fact:</b> the <b>BOB splits in two at Zweilütschinen</b> — the front coaches run to Lauterbrunnen, the rear to Grindelwald. Board the front half.</div></div>
+    </div>
+
+  </div>
+  <p style="font-size:11px;color:var(--text-3);margin-top:14px;line-height:1.6;">Station → hotel walk/Uber times will be filled in once lodging is locked (Salzburg's flagged <em>zum Hirschen</em> is ~5-min walk from Hbf). Fares are advance-purchase floors; book 3–6 months out for the lowest.</p>
+</div>
+
+<!-- BOOKING + DECISIONS GRID -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Booking Status</div>
+    <div class="check-row">
+      <div class="check-box done">✓</div>
+      <div class="check-body">
+        <div class="check-name">Flights — outbound · <a href="https://www.united.com" target="_blank">UA 52</a> · conf (private)</div>
+        <div class="check-detail">IAD → ZRH · Sep 16 dep 5:45 PM · Sep 17 arr 8:05 AM · award: 280k miles + $39.20 ($5.60/pax × 7)</div>
+      </div>
+      <span class="badge badge-green">Booked</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box done">✓</div>
+      <div class="check-body">
+        <div class="check-name">Flights — return · <a href="https://www.aircanada.com" target="_blank">Air Canada</a> · conf (private)</div>
+        <div class="check-detail">ZRH → FRA → IAD · Sep 26 dep 13:25 arr 20:00 · final leg UA933 · CAD 225.60/pax ($161.75) × 6 · Tanner return pending · ⚠️ modified Jun 16</div>
+      </div>
+      <span class="badge badge-amber">Verify</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box done">✓</div>
+      <div class="check-body">
+        <div class="check-name">Munich hotel — 3 nights (<a href="https://www.homaris.com" target="_blank">Homaris (private)</a>)</div>
+        <div class="check-detail">Sep 18–21 · €4,450.13 (~$5,171.50) paid Jun 16 by Zach &amp; Taylor (shared Venture X) · booked via Homaris (Berlin agency) · apartment in Munich · address TBD</div>
+      </div>
+      <span class="badge badge-green">Booked</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-body"><div class="check-name">Zürich hotel — arrival night (Sep 17, 3 rooms)</div><div class="check-detail">Near Hauptbahnhof · Marriott preferred · see hotel recommendations below</div></div>
+      <span class="badge badge-red">TBD</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-body"><div class="check-name">Salzburg hotel — 2 nights</div><div class="check-detail">Sep 21–23 · Old Town area preferred · ⭐ Flagged: <a href="https://www.booking.com/hotel/at/zumhirschen.html" target="_blank">Design Hotel zum Hirschen</a> — 4★, Elisabethstraße 5, ~5-min walk from Hbf, from ~€70–118/rm</div></div>
+      <span class="badge badge-purple">Candidate flagged</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-body"><div class="check-name">Innsbruck hotel — 1 night</div><div class="check-detail">Sep 23 · <a href="https://www.motel-one.com/en/hotels/innsbruck/" target="_blank">Motel One Innsbruck</a> near HBF recommended</div></div>
+      <span class="badge badge-red">TBD</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-body"><div class="check-name">Lauterbrunnen hotel — 1 night</div><div class="check-detail">Sep 24 · pending village decision below</div></div>
+      <span class="badge badge-purple">Decide first</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-body"><div class="check-name">Zürich hotel — departure night (Sep 25, 3 rooms)</div><div class="check-detail">Near Hauptbahnhof · same property as Sep 17 if available</div></div>
+      <span class="badge badge-red">TBD</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-body"><div class="check-name">Eagle's Nest private transfer</div><div class="check-detail">Sep 22 · full-day from Salzburg · group of 7 · <a href="https://bavarian-outfitters.de/en/" target="_blank">Bavarian Outfitters</a> ~$530</div></div>
+      <span class="badge badge-red">Book now</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-body"><div class="check-name">Train tickets — all 5 legs × 7 people</div><div class="check-detail"><a href="https://www.sbb.ch" target="_blank">SBB.ch</a> · <a href="https://www.bahn.de" target="_blank">DB Navigator</a> · <a href="https://www.oebb.at" target="_blank">ÖBB.at</a> · Opens 3–6 months before travel</div></div>
+      <span class="badge badge-amber">Not open yet</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <div class="check-body"><div class="check-name"><a href="https://www.myswisstravelpass.com" target="_blank">Swiss Travel Pass</a> × 7 people</div><div class="check-detail">3 days · covers all Swiss legs + mountain railway discounts · ~$330/pp</div></div>
+      <span class="badge badge-red">TBD</span>
+    </div>
+    <div class="hotel-recs-label">Zürich Sep 17 — Hotel Options (3 Rooms · Marriott Preferred · ≤$350/room)</div>
+    <div class="hotel-rec-grid">
+      <div class="hotel-rec best">
+        <div class="hotel-rec-name">⭐ citizenM Zürich</div>
+        <div class="hotel-rec-detail">Marriott Bonvoy member · 6-min tram to HBF · King beds, 24/7 bar, contactless check-in</div>
+        <div class="hotel-rec-price">~$180–$250 / room</div>
+        <div style="margin-top:7px;"><a href="https://www.citizenm.com/hotels/europe/zurich/zurich-hotel" target="_blank" style="font-size:11px;font-weight:600;">Book citizenM →</a></div>
+      </div>
+      <div class="hotel-rec">
+        <div class="hotel-rec-name">Zürich Marriott Hotel</div>
+        <div class="hotel-rec-detail">Neumühlequai 42 · 10-min walk to HBF · 5-star · Full Marriott points · May push $350–$400+</div>
+        <div class="hotel-rec-price">~$325–$400+ / room</div>
+        <div style="margin-top:7px;"><a href="https://www.kayak.com/Zurich-Hotels-Zurich-Marriott-Hotel.49265.ksp" target="_blank" style="font-size:11px;font-weight:600;">Check rates →</a></div>
+      </div>
+      <div class="hotel-rec">
+        <div class="hotel-rec-name">Renaissance Zürich Tower</div>
+        <div class="hotel-rec-detail">Marriott brand · 15-min from HBF · Solid points property · Typically under $350</div>
+        <div class="hotel-rec-price">~$250–$320 / room</div>
+        <div style="margin-top:7px;"><a href="https://www.marriott.com/hotels/travel/zrhrt-renaissance-zurich-tower-hotel/" target="_blank" style="font-size:11px;font-weight:600;">Book →</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Decisions Needed</div>
+    <div class="decision">
+      <div class="decision-q">1 — Lauterbrunnen or Wengen for Sep 24–25?</div>
+      <div class="opts"><span class="opt opt-rec">Lauterbrunnen (recommended)</span><span class="opt">Wengen</span></div>
+      <div class="decision-note">Lauterbrunnen: easier bags, more rooms for 7, car access. Wengen: car-free, better views, bags up by cogwheel train only.</div>
+    </div>
+    <div class="decision">
+      <div class="decision-q">2 — Sep 25 Alps morning activity?</div>
+      <div class="opts"><span class="opt opt-rec">Männlichen / Wengen</span><span class="opt">Mürren</span><span class="opt">Grindelwald First</span></div>
+      <div class="decision-note">Weather-dependent. Must board train by 12:00–13:00 to reach Zürich for Sep 26 departure.</div>
+    </div>
+    <div class="decision">
+      <div class="decision-q">3 — Swiss Travel Pass: 1st or 2nd class?</div>
+      <div class="opts"><span class="opt opt-rec">2nd class · $330/pp</span><span class="opt">1st class · $526/pp</span></div>
+      <div class="decision-note">$196/pp difference = $1,372 total for 7. European 2nd class is very comfortable on all these routes.</div>
+    </div>
+    <div class="decision">
+      <div class="decision-q">4 — Eagle's Nest transfer provider?</div>
+      <div class="opts"><span class="opt opt-rec"><a href="https://bavarian-outfitters.de/en/" target="_blank">Bavarian Outfitters ~$530</a></span><span class="opt">Panorama Tours ~$762</span><span class="opt">Happy To Visit ~$818</span></div>
+      <div class="decision-note">Book immediately — Eagle's Nest bus slots sell out fast. Sep 22 is also Oktoberfest opening weekend.</div>
+    </div>
+    <div class="decision">
+      <div class="decision-q">5 — Cost splitting method?</div>
+      <div class="opts"><span class="opt opt-rec">Splitwise</span><span class="opt">Venmo</span><span class="opt">One person fronts</span></div>
+      <div class="decision-note">Agree before the trip. Someone will front Eagle's Nest, trains, hotels. Set up Splitwise now.</div>
+    </div>
+  </div>
+</div>
+
+<!-- OKTOBERFEST PRO TIPS -->
+<div class="card">
+  <div class="card-title">🍺 Oktoberfest Pro Tips — First Timer's Field Guide</div>
+  <div class="tips-intro">
+    Opening Day (Sat Sep 19) is the wildest, most electric day of the entire 16-day festival (the 191st Wiesn, Sep 19–Oct 4, 2026) — and you're going twice. Here's everything you need to know to own the experience, not survive it. Read this section before you leave the Airbnb each morning.
+  </div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-header" style="background:#FEE2E2;color:#991B1B;">🎒 Bags &amp; Security — Strict Rules</div>
+      <div class="tip-body"><ul>
+        <li><strong>Max bag size: 20 × 15 × 10 cm (3 liters)</strong> — measured at every entrance with a physical box. No exceptions, no arguments.</li>
+        <li>No backpacks, no large purses, no hydration packs, no oversized fanny packs</li>
+        <li>What works: small crossbody clutch, slim fanny pack under 3L, women's dirndl bag (Dirndltasche)</li>
+        <li>No glass bottles, no aerosol cans, no items that can be used as weapons</li>
+        <li>Overflow luggage storage at P1, P5, P8, and P10 entrances for €5/bag</li>
+        <li>Security is professional and consistent — if it doesn't fit the box, you're turned away</li>
+      </ul></div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-header" style="background:#CCFBF1;color:#134E4A;">💧 Water, Food &amp; Hydration</div>
+      <div class="tip-body"><ul>
+        <li><strong>No outside beverages allowed in the beer tents</strong> — including sealed water bottles</li>
+        <li><strong>Bathroom sinks inside every tent have cold, clean, potable tap water</strong> — drink freely and refill there</li>
+        <li>Eat before you go in and keep eating throughout — never drink on an empty stomach</li>
+        <li>Must-order inside: <em>Hendl</em> (half roast chicken ~€18), <em>Brez'n</em> (giant pretzel ~€7), <em>Käsespätzle</em></li>
+        <li>One <em>mass</em> = 1 full liter ≈ 3 American pints. Sip it over 45 min, not 5.</li>
+        <li>Beer gardens outside tents: you can bring your own snacks (Bavarian tradition) but not outside drinks</li>
+      </ul></div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-header" style="background:#FEF3C7;color:#92400E;">🚽 The Bathroom Situation</div>
+      <div class="tip-body"><ul>
+        <li><strong>Real bathrooms — not port-a-potties.</strong> Stalls, sinks, soap, paper towels, toilet paper. Properly maintained.</li>
+        <li>Located in the far back corners or sides of each tent — easy to find once inside</li>
+        <li>Attendants keep them clean and stocked — <strong>always tip €0.50–€1</strong>. Bring coins.</li>
+        <li>Go before you desperately need to — lines grow steadily through the day</li>
+        <li>Sink water is potable — drink a full glass every time you visit</li>
+        <li><strong>€100 fine</strong> for public urination. Security enforces this. Use the bathrooms.</li>
+      </ul></div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-header" style="background:#DCFCE7;color:#166534;">💰 Money — Cash Is King</div>
+      <div class="tip-body"><ul>
+        <li><strong>Beer tents are cash only</strong> — no cards, no Apple Pay, no exceptions</li>
+        <li>Budget at least <strong>€150 per person per Oktoberfest day</strong> (beer + food + tips + bathrooms)</li>
+        <li>Beer: <strong>€14.80–€15.90 per mass</strong> in 2026 (official avg €15.61, up ~2.4% vs 2025). ~€32 for two, before tips.</li>
+        <li>ATMs are located on the Wiesn grounds if you run low</li>
+        <li>Tip your servers generously — they carry 10–12 masses at a time and work brutal back-to-back shifts</li>
+        <li>Some outdoor beer garden kiosks accept cards, but cash is always safest</li>
+      </ul></div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-header" style="background:#FEE2E2;color:#991B1B;">⏰ Opening Day Timing — Sep 19</div>
+      <div class="tip-body"><ul>
+        <li><strong>Grounds open: 9:00 AM · Beer service starts: 12:00 noon</strong> (after the ceremonial tapping)</li>
+        <li><strong>Arrive by 8:00 AM</strong> to secure unreserved seating before the doors open</li>
+        <li>By 10–11 AM tents begin filling. After noon, entry without a reservation is very difficult.</li>
+        <li>Tables seat 8–10. Your group of 7 needs to claim the end of a table together — act as one unit.</li>
+        <li>Day 2 (Sep 20): arrive 10 AM — slightly calmer, still incredible energy</li>
+        <li>Pro move: designate one person to hold seats while others get food/drinks first</li>
+      </ul></div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-header" style="background:#FFEDD5;color:#9A3412;">🍺 Drinking Strategy</div>
+      <div class="tip-body"><ul>
+        <li><strong>Don't chug.</strong> Servers and security will eject you for drinking too fast. Take it seriously.</li>
+        <li>Sip a mass over 30–45 minutes. That's the culture — you're in a marathon, not a sprint.</li>
+        <li>Pace: 2–3 masses over a full day is a proper Oktoberfest. 4+ requires food and experience.</li>
+        <li>Standing on benches (<em>Bankstehen</em>) is a tradition — but <strong>take your shoes off</strong> first or you'll be ejected</li>
+        <li>Drink a full glass of bathroom sink water between each mass. Your Sep 20 self will thank you.</li>
+        <li>Order the Hendl early. Eat it all. It's the best thing on the menu and the best sponge.</li>
+      </ul></div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-header" style="background:#DBEAFE;color:#1E3A8A;">👥 Safety &amp; Group Management</div>
+      <div class="tip-body"><ul>
+        <li>Security is extremely heavy — 50+ cameras, uniformed and plainclothes officers throughout. Oktoberfest is safe.</li>
+        <li>Ejections are fast for violence, verbal aggression, or severe intoxication — don't engage with anyone who is</li>
+        <li><strong>Opening Day has the most incidents</strong> — highest energy, most alcohol, most chaos in adjacent areas</li>
+        <li><strong>Set a group meeting point before entering</strong> and save the Airbnb address offline in every phone now</li>
+        <li>Keep cash spread across multiple pockets. Phone in front pocket only. Pickpocketing does occur.</li>
+        <li>First aid stations are throughout the grounds — free to use, well-staffed</li>
+      </ul></div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-header" style="background:#EDE9FE;color:#3730A3;">👗 Dress, Vibe &amp; Tent Tips</div>
+      <div class="tip-body"><ul>
+        <li><strong>Lederhosen (men) and Dirndl (women) are basically required</strong> for the real Oktoberfest experience. You'll blend in, get served faster, and actually feel like you're part of it — not just watching.</li>
+        <li>Pick up rentals Sep 18 at <a href="https://bavarian-outfitters.de/en/" target="_blank">Bavarian Outfitters</a>, Bayerstraße 22 (near HBF). Book online first.</li>
+        <li>Wear flat, comfortable shoes — hours of standing on wooden floors</li>
+        <li>Bring a light layer — Sep mornings are crisp, evenings cool fast</li>
+        <li>Best tents: <strong>Hofbräu</strong> (tourist-friendly, loud party vibe) or <strong>Augustiner</strong> (most authentic, locals' favorite)</li>
+        <li>Dirndl bow: right = taken · left = single · center = in a relationship · back = widowed</li>
+      </ul></div>
+    </div>
+  </div>
+  <div class="checklist-wrap">
+    <div class="checklist-title">✅ Oktoberfest Essentials — Check Off Before Leaving the Airbnb Each Morning</div>
+    <div class="checklist-grid">
+      <div class="ci"><input type="checkbox" id="e1"><label for="e1">💶 Cash €150+ per person</label></div>
+      <div class="ci"><input type="checkbox" id="e2"><label for="e2">👗 Lederhosen or Dirndl</label></div>
+      <div class="ci"><input type="checkbox" id="e3"><label for="e3">📱 Phone (fully charged)</label></div>
+      <div class="ci"><input type="checkbox" id="e4"><label for="e4">🔋 Portable charger</label></div>
+      <div class="ci"><input type="checkbox" id="e5"><label for="e5">🛍 Small bag ≤ 20×15×10 cm</label></div>
+      <div class="ci"><input type="checkbox" id="e6"><label for="e6">🪙 €0.50 &amp; €1 coins for bathrooms</label></div>
+      <div class="ci"><input type="checkbox" id="e7"><label for="e7">🧴 Sunscreen (packets, not aerosol)</label></div>
+      <div class="ci"><input type="checkbox" id="e8"><label for="e8">🧻 Baby wipes / face wipes</label></div>
+      <div class="ci"><input type="checkbox" id="e9"><label for="e9">💊 Ibuprofen / Advil</label></div>
+      <div class="ci"><input type="checkbox" id="e10"><label for="e10">🪪 ID / Passport</label></div>
+      <div class="ci"><input type="checkbox" id="e11"><label for="e11">🧥 Light jacket for evening</label></div>
+      <div class="ci"><input type="checkbox" id="e12"><label for="e12">👟 Flat, comfortable shoes</label></div>
+      <div class="ci"><input type="checkbox" id="e13"><label for="e13">📍 Airbnb address saved offline</label></div>
+      <div class="ci"><input type="checkbox" id="e14"><label for="e14">👥 Group meeting point agreed</label></div>
+      <div class="ci"><input type="checkbox" id="e15"><label for="e15">🍳 Ate a real breakfast first</label></div>
+    </div>
+  </div>
+</div>
+
+<!-- GROUP ROSTER -->
+<div class="card">
+  <div class="card-title">👥 Group Roster — 7 Travelers</div>
+  <div class="roster-grid">
+    <div class="roster-card"><div class="roster-names">Zach + Taylor</div><div class="roster-tag">Room 1 · Couple</div></div>
+    <div class="roster-card"><div class="roster-names">Jeremy + Melissa</div><div class="roster-tag">Room 2 · Taylor's Parents</div></div>
+    <div class="roster-card"><div class="roster-names">Alex + Gretchen</div><div class="roster-tag">Room 3 · Taylor's Brother &amp; Wife</div></div>
+    <div class="roster-card solo"><div class="roster-names">Tanner</div><div class="roster-tag">Taylor's Brother · Solo · TBD</div></div>
+  </div>
+  <div class="note-box" style="margin-top:14px;">🍺 <strong>Joining in Munich for Oktoberfest:</strong> Caroline &amp; Anton — our friends who live in Munich. Not part of the 7-person lodging count. <strong>Address still to be added.</strong></div>
+</div>
+
+<!-- MUNICH SEP 18 GAP PLAN -->
+<div class="card">
+  <div class="card-title">🚂 Munich Sep 18 — Arrival Gap Plan (Airbnb check-in 4:00 PM)</div>
+  <div class="warn-bar" style="margin:0 0 18px;box-shadow:none;">
+    <div class="warn-icon">💡</div>
+    <div>Homaris ((private)) check-in is 4:00 PM. With ~4h train from Zürich, you'll arrive MUC HBF around 12:30–1:30 PM. <strong>Message the host before arrival</strong> — many allow early bag drop even if the room isn't ready. If not, use HBF lockers (€5–8/bag) and don't drag luggage through the city.</div>
+  </div>
+  <div class="gap-timeline">
+    <div class="gap-row">
+      <div class="gap-time">08:30</div>
+      <div><div class="gap-title">🚆 Depart Zürich HBF</div><div class="gap-detail">ZRH → MUC · Astoro · ~3h 40m · Book on <a href="https://www.sbb.ch" target="_blank">SBB.ch</a> or <a href="https://www.bahn.de" target="_blank">DB Navigator</a> when schedules open. Aim for early departure — 4 PM check-in is a hard deadline.</div></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-time">12:30</div>
+      <div><div class="gap-title">📦 Bags at Munich HBF Lockers</div><div class="gap-detail">€5–8/bag, 24/7, directly in the station. <a href="https://www.bahnhof.de/en/muenchen-hbf/locker" target="_blank">HBF lockers →</a> · Backup: <a href="https://stasher.com/luggage-storage/germany/munich" target="_blank">Stasher nearby shops</a></div></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-time">13:00</div>
+      <div><div class="gap-title">🚇 U-Bahn to Marienplatz → Lunch at Viktualienmarkt</div><div class="gap-detail">10 min, ~€3.70 day ticket. Munich's legendary outdoor market — sausages, pretzels, local beers. Your first real taste of Bavaria before Oktoberfest tomorrow.</div></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-time">14:30</div>
+      <div><div class="gap-title">👗 Pick Up Lederhosen &amp; Dirndl</div><div class="gap-detail"><a href="https://bavarian-outfitters.de/en/" target="_blank">Bavarian Outfitters</a> · Bayerstraße 22 (10-min walk from HBF). All 7 outfits secured for Opening Day tomorrow. <strong>Reserve online in advance</strong> — Oktoberfest stock goes fast.</div></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-time">15:30</div>
+      <div><div class="gap-title">🏛 Optional: Altstadt Stroll or Rest</div><div class="gap-detail">Frauenkirche, Residenz Palace exterior, Hofbräuhaus preview — or skip entirely. Sep 19 is Opening Day and an early night is smart strategy.</div></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-time">16:00</div>
+      <div><div class="gap-title">🏠 Check In · Get Settled · Early Night</div><div class="gap-detail">Retrieve bags from HBF lockers (~15:45), Uber to Airbnb. Unpack, rest up. Alarm set for 7:00 AM — you need to be at Theresienwiese by 8:00 AM tomorrow.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LEDERHOSEN RENTALS -->
+<div class="card">
+  <div class="card-title">👗 Lederhosen &amp; Dirndl Rentals — Munich</div>
+  <p style="font-size:13px;color:var(--text-2);margin-bottom:14px;">Pick up Sep 18 afternoon, wear Sep 19 + 20, return Sep 20 evening or Sep 21 morning before the Salzburg train. Book online now — Oktoberfest stock depletes fast.</p>
+  <div class="rental-grid">
+    <div class="rental-card best">
+      <div class="rental-name">⭐ Bavarian Outfitters</div>
+      <div class="rental-detail">Bayerstraße 22 (closest to HBF) + 3 other Munich locations · 3,000 lederhosen / 2,000 dirndls in stock · Hotel delivery available · Return by 10 AM next day · Free online reservation</div>
+      <div class="rental-price">Lederhosen set €49.90 · Dirndl €42.90</div>
+      <div style="margin-top:10px;"><a href="https://bavarian-outfitters.de/en/" target="_blank" style="font-size:11.5px;font-weight:600;color:var(--indigo);">Book at bavarian-outfitters.de →</a></div>
+    </div>
+    <div class="rental-card">
+      <div class="rental-name">Dirndl-Leihen</div>
+      <div class="rental-detail">Online booking with in-store pickup · Good selection for women's dirndls · City center location · Competitive group pricing available</div>
+      <div class="rental-price">See group pricing online</div>
+      <div style="margin-top:10px;"><a href="https://dirndl-leihen.de/en/pricing/" target="_blank" style="font-size:11.5px;font-weight:600;color:var(--indigo);">dirndl-leihen.de/pricing →</a></div>
+    </div>
+    <div class="rental-card">
+      <div class="rental-name">Lederhosenverleih</div>
+      <div class="rental-detail">TripAdvisor-recommended · Good reviews for fit and authenticity · City center · Popular with first-time visitors · Authentic traditional styles</div>
+      <div class="rental-price">Check current rates</div>
+      <div style="margin-top:10px;"><a href="https://www.tripadvisor.com/Attraction_Review-g187309-d12921184-Reviews-Lederhosenverleih-Munich_Upper_Bavaria_Bavaria.html" target="_blank" style="font-size:11.5px;font-weight:600;color:var(--indigo);">TripAdvisor reviews →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- INPUTS NEEDED -->
+<div class="card">
+  <div class="card-title">Inputs Needed From Group</div>
+  <div class="input-row"><div class="dot dot-red"></div><div class="input-body"><div class="input-title">Caroline &amp; Anton's Munich address</div><div class="input-detail">⭐ REMINDER: add our Munich friends' address. They're joining the group for Oktoberfest — needed for meet-up planning and any pickup/handoff logistics.</div></div><div class="owner-tag">Zach / Taylor</div></div>
+  <div class="input-row"><div class="dot dot-red"></div><div class="input-body"><div class="input-title">Munich Homaris property name + address</div><div class="input-detail">Res (private) · Check Homaris account directly — not in confirmation email. Needed for Sep 18 check-in logistics and host early-bag-drop request.</div></div><div class="owner-tag">Zach</div></div>
+  <div class="input-row"><div class="dot dot-red"></div><div class="input-body"><div class="input-title">Room split preference at each city</div><div class="input-detail">3 couples + Tanner (floats) confirmed. Affects room count and pricing at every hotel stop.</div></div><div class="owner-tag">Everyone</div></div>
+  <div class="input-row"><div class="dot dot-red"></div><div class="input-body"><div class="input-title">Heavy luggage check</div><div class="input-detail">Anyone packing a large suitcase? Affects taxi vs. walk strategy at each station. Sep 24 has 3 changes — critical to know.</div></div><div class="owner-tag">Everyone</div></div>
+  <div class="input-row"><div class="dot dot-amber"></div><div class="input-body"><div class="input-title">Per-person budget ceiling</div><div class="input-detail">All-in estimated at <strong>$3,065–$3,985/pp</strong> incl. airfare value (~$417/pp: $250 miles value + cash; ground-only $2,648–$3,568). Is everyone aligned? Shapes hotel tier choices.</div></div><div class="owner-tag">Everyone</div></div>
+  <div class="input-row"><div class="dot dot-amber"></div><div class="input-body"><div class="input-title">Who books the trains?</div><div class="input-detail">One person buys 7 seats per leg (easier seat selection) vs. each person books individually.</div></div><div class="owner-tag">Group</div></div>
+  <div class="input-row"><div class="dot dot-amber"></div><div class="input-body"><div class="input-title">Oktoberfest tent strategy</div><div class="input-detail">Opening Day Sep 19 — arrive by 8:00 AM. Which tent? <strong>Hofbräu</strong> (party/tourist) or <strong>Augustiner</strong> (authentic/locals)? Group of 7 needs a plan to claim table space together.</div></div><div class="owner-tag">Group</div></div>
+  <div class="input-row"><div class="dot dot-green"></div><div class="input-body"><div class="input-title">Dietary restrictions / accessibility needs</div><div class="input-detail">Affects restaurant bookings, tent selection, cable car planning</div></div><div class="owner-tag">Everyone</div></div>
+  <div class="input-row"><div class="dot dot-green"></div><div class="input-body"><div class="input-title">Travel insurance</div><div class="input-detail">Sep 24 has 3 connections — high delay risk. Each person arranges individually. Strongly recommended.</div></div><div class="owner-tag">Each person</div></div>
+</div>
+
+<!-- COST TABLE -->
+<div class="card">
+  <div class="card-title">Full Cost Estimate — Group of 7</div>
+  <table class="cost-table">
+    <thead><tr><th style="width:34%">Item</th><th style="width:12%">Dates</th><th class="r" style="width:12%">Low Est.</th><th class="r" style="width:12%">High Est.</th><th class="r" style="width:13%">Per Person</th><th style="width:17%">Status</th></tr></thead>
+    <tbody>
+      <tr class="cat-row"><td colspan="6">ACCOMMODATION</td></tr>
+      <tr><td><strong>Munich</strong> — 3 nights (<a href="https://www.homaris.com" target="_blank">Homaris (private)</a>)</td><td class="m">Sep 18–21</td><td class="r confirmed-amt">$5,171.50</td><td class="r confirmed-amt">$5,171.50</td><td class="r"><strong>$738.79</strong></td><td><span class="badge badge-green">Confirmed</span></td></tr>
+      <tr><td><strong>Zürich</strong> — arrival, 1 night (<a href="https://www.citizenm.com/hotels/europe/zurich/zurich-hotel" target="_blank">citizenM rec</a>)</td><td class="m">Sep 17</td><td class="r">$450</td><td class="r">$700</td><td class="r">$64–100</td><td><span class="badge badge-red">TBD</span></td></tr>
+      <tr><td><strong>Salzburg</strong> — 2 nights (<a href="https://www.booking.com/hotel/at/zumhirschen.html" target="_blank">zum Hirschen flagged</a>)</td><td class="m">Sep 21–23</td><td class="r">$700</td><td class="r">$1,200</td><td class="r">$100–171</td><td><span class="badge badge-purple">Candidate</span></td></tr>
+      <tr><td><strong>Innsbruck</strong> — 1 night (<a href="https://www.motel-one.com/en/hotels/innsbruck/" target="_blank">Motel One rec</a>)</td><td class="m">Sep 23</td><td class="r">$350</td><td class="r">$560</td><td class="r">$50–80</td><td><span class="badge badge-red">TBD</span></td></tr>
+      <tr><td><strong>Lauterbrunnen</strong> — 1 night</td><td class="m">Sep 24</td><td class="r">$500</td><td class="r">$900</td><td class="r">$71–129</td><td><span class="badge badge-purple">Decide first</span></td></tr>
+      <tr><td><strong>Zürich</strong> — departure, 1 night</td><td class="m">Sep 25</td><td class="r">$450</td><td class="r">$700</td><td class="r">$64–100</td><td><span class="badge badge-red">TBD</span></td></tr>
+      <tr class="subtotal-row"><td colspan="2">Accommodation subtotal</td><td class="r">$7,622</td><td class="r">$9,232</td><td class="r">$1,089–$1,319</td><td></td></tr>
+      <tr class="cat-row"><td colspan="6">TRANSPORT — TRAINS</td></tr>
+      <tr><td><strong>Zürich → Munich</strong> · ECE Astoro · 3h 30m · 2nd fr €21.90</td><td class="m">Sep 18</td><td class="r">$168</td><td class="r">$560</td><td class="r">$24–80</td><td><a href="https://www.bahn.de" target="_blank" style="font-size:11px;">Book DB.de</a></td></tr>
+      <tr><td><strong>Munich → Salzburg</strong> · Railjet · 1h 28m · 2nd fr €17.99</td><td class="m">Sep 21</td><td class="r">$135</td><td class="r">$350</td><td class="r">$19–50</td><td><a href="https://www.bahn.de" target="_blank" style="font-size:11px;">Book DB.de</a></td></tr>
+      <tr><td><strong>Salzburg → Innsbruck</strong> · Railjet · 1h 48m · 2nd fr €29.90</td><td class="m">Sep 23</td><td class="r">$226</td><td class="r">$420</td><td class="r">$32–60</td><td><a href="https://www.oebb.at" target="_blank" style="font-size:11px;">Book ÖBB.at</a></td></tr>
+      <tr><td><strong>Innsbruck → Zürich</strong> · ÖBB Railjet (diverted) · buy to border</td><td class="m">Sep 24</td><td class="r">$175</td><td class="r">$315</td><td class="r">$25–45</td><td class="m">Swiss Pass covers CH</td></tr>
+      <tr><td><strong><a href="https://www.myswisstravelpass.com" target="_blank">Swiss Travel Pass</a></strong> × 7 · 3 days · 2nd class · CHF 254</td><td class="m">Sep 24–26</td><td class="r">$2,310</td><td class="r">$2,310</td><td class="r"><strong>$330</strong></td><td><span class="badge badge-red">TBD</span></td></tr>
+      <tr class="subtotal-row"><td colspan="2">Train + pass subtotal</td><td class="r">$3,014</td><td class="r">$3,955</td><td class="r">$431–$565</td><td></td></tr>
+      <tr class="cat-row"><td colspan="6">TRANSPORT — TRANSFERS &amp; LOCAL</td></tr>
+      <tr><td><strong><a href="https://bavarian-outfitters.de/en/" target="_blank">Eagle's Nest private transfer</a></strong> · SZG ↔ Berchtesgaden</td><td class="m">Sep 22</td><td class="r">$530</td><td class="r">$820</td><td class="r">$76–117</td><td><span class="badge badge-red">Book now</span></td></tr>
+      <tr><td><strong>Zürich airport train</strong> · ZRH ↔ HBF × 7 (both ways)</td><td class="m">Sep 17+26</td><td class="r">$110</td><td class="r">$110</td><td class="r">$16</td><td class="m">CHF 7/pp each way</td></tr>
+      <tr><td><strong>Taxis / local transport</strong> · across all cities</td><td class="m">Various</td><td class="r">$200</td><td class="r">$500</td><td class="r">$29–71</td><td class="m">Higher if heavy luggage</td></tr>
+      <tr class="subtotal-row"><td colspan="2">Transfers subtotal</td><td class="r">$840</td><td class="r">$1,430</td><td class="r">$120–$204</td><td></td></tr>
+      <tr class="cat-row"><td colspan="6">ACTIVITIES</td></tr>
+      <tr><td><strong><a href="https://www.oktoberfest.de/en/" target="_blank">Oktoberfest</a></strong> · 2 days · beer, food, tips</td><td class="m">Sep 19–20</td><td class="r">$1,400</td><td class="r">$2,100</td><td class="r">$200–300</td><td class="m">€150+/pp/day minimum</td></tr>
+      <tr><td><strong>Eagle's Nest admission</strong> · Kehlsteinhaus bus</td><td class="m">Sep 22</td><td class="r">$105</td><td class="r">$140</td><td class="r">$15–20</td><td class="m">Some tours include</td></tr>
+      <tr><td><strong>Nordkette cable car</strong> · Innsbruck</td><td class="m">Sep 23</td><td class="r">$245</td><td class="r">$280</td><td class="r">$35–40</td><td class="m">Weather dependent</td></tr>
+      <tr><td><strong>Swiss Alps activity</strong> · Männlichen / Mürren</td><td class="m">Sep 25</td><td class="r">$385</td><td class="r">$560</td><td class="r">$55–80</td><td class="m">Swiss Pass gives discount</td></tr>
+      <tr><td><strong>Salzburg sights</strong> · Hohensalzburg Fortress</td><td class="m">Sep 21</td><td class="r">$115</td><td class="r">$140</td><td class="r">$16–20</td><td class="m">Mirabell Gardens free</td></tr>
+      <tr><td><strong><a href="https://bavarian-outfitters.de/en/" target="_blank">Lederhosen &amp; Dirndl rental</a></strong> · 7 outfits</td><td class="m">Sep 18–21</td><td class="r">$330</td><td class="r">$420</td><td class="r">$47–60</td><td class="m">€49.90 leder · €42.90 dirndl</td></tr>
+      <tr class="subtotal-row"><td colspan="2">Activities subtotal</td><td class="r">$2,580</td><td class="r">$3,640</td><td class="r">$369–$520</td><td></td></tr>
+      <tr class="cat-row"><td colspan="6">FOOD &amp; DRINK (non-Oktoberfest days · eating out + drinks)</td></tr>
+      <tr><td><strong>Meals &amp; drinks on the ground</strong> · 8 days · 7 people</td><td class="m">Sep 17–26</td><td class="r">$4,480</td><td class="r">$6,720</td><td class="r">$640–960</td><td class="m">$80–120/pp/day · lean high</td></tr>
+      <tr class="subtotal-row"><td colspan="2">Food subtotal</td><td class="r">$4,480</td><td class="r">$6,720</td><td class="r">$640–$960</td><td></td></tr>
+      <tr class="subtotal-row"><td colspan="2">Ground subtotal (excl. airfare)</td><td class="r">$18,536</td><td class="r">$24,977</td><td class="r">$2,648–$3,568</td><td></td></tr>
+      <tr class="cat-row"><td colspan="6">INTERNATIONAL AIRFARE (award value + cash · IAD ⇄ ZRH)</td></tr>
+      <tr><td><strong><a href="https://www.united.com" target="_blank">United UA 52</a></strong> · outbound IAD → ZRH (award) · 7 pax</td><td class="m">Sep 16</td><td class="r">$1,789.20</td><td class="r">$1,789.20</td><td class="r">$255.60</td><td class="m">$250 value/pax (280k miles) + $5.60 fees</td></tr>
+      <tr><td><strong><a href="https://www.aircanada.com" target="_blank">Air Canada</a></strong> · return ZRH → FRA → IAD · 6 pax</td><td class="m">Sep 26</td><td class="r confirmed-amt">$970.50</td><td class="r confirmed-amt">$970.50</td><td class="r">$161.75</td><td class="m">CAD 225.60/pax · Tanner pending</td></tr>
+      <tr class="subtotal-row"><td colspan="2">Airfare subtotal (award value + cash)</td><td class="r">$2,759.70</td><td class="r">$2,759.70</td><td class="r">~$417/pp</td><td></td></tr>
+      <tr class="total-row"><td colspan="2"><strong>ESTIMATED ALL-IN TOTAL (incl. airfare value)</strong></td><td class="r"><strong>$21,296</strong></td><td class="r"><strong>$27,737</strong></td><td class="r">—</td><td style="color:rgba(255,255,255,.4);font-size:11px;">All-in · 7 travelers</td></tr>
+    </tbody>
+  </table>
+  <div class="note-box"><strong>Swiss Travel Pass:</strong> Covers unlimited Swiss trains + all Swiss legs of this trip. Gives 25–50% off mountain railways (Männlichen, Mürren, etc.). 3 days consecutive, 2nd class = CHF 254 (~$330/pp). Buy at <a href="https://www.myswisstravelpass.com" target="_blank">myswisstravelpass.com</a> or <a href="https://www.sbb.ch" target="_blank">sbb.ch</a>.</div>
+</div>
+
+<!-- PER PERSON -->
+<div class="card">
+  <div class="card-title">Per-Person Cost Breakdown</div>
+  <div class="pp-grid">
+    <div class="pp-card"><div class="pp-cat">✈ Airfare (award value + cash)</div><div class="pp-range">~$417</div></div>
+    <div class="pp-card confirmed"><div class="pp-cat">Munich hotel (locked in)</div><div class="pp-range">$738.79</div></div>
+    <div class="pp-card"><div class="pp-cat">All other accommodation</div><div class="pp-range">$350–$580</div></div>
+    <div class="pp-card"><div class="pp-cat">Trains + Swiss Travel Pass</div><div class="pp-range">$431–$565</div></div>
+    <div class="pp-card"><div class="pp-cat">Transfers + local transport</div><div class="pp-range">$120–$204</div></div>
+    <div class="pp-card"><div class="pp-cat">Activities (incl. Oktoberfest + outfits)</div><div class="pp-range">$369–$520</div></div>
+    <div class="pp-card"><div class="pp-cat">Food &amp; drink (lean high)</div><div class="pp-range">$640–$960</div></div>
+  </div>
+  <div class="total-banner">
+    <div class="total-banner-left"><p>Estimated all-in per-person cost (incl. airfare value)</p><small>Ground (lean-high estimate) + airfare ~$417/pp (award value $250/pax + cash) · ground-only is $2,648–$3,568/pp · Tanner's return airfare still pending</small></div>
+    <div class="total-banner-right"><div class="amount">$3,065 – $3,985</div><small>per person · all-in incl. airfare value</small></div>
+  </div>
+</div>
+
+<!-- SETTLE-UP LEDGER -->
+<div class="card">
+  <div class="card-title">💸 Settle-Up Ledger — Who's Fronted What</div>
+  <table class="cost-table">
+    <thead><tr><th style="width:14%">Payer</th><th style="width:34%">Item</th><th class="r" style="width:18%">Amount</th><th style="width:13%">Split</th><th style="width:21%">Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Zach &amp; Taylor</strong></td><td>Munich lodging — <a href="https://www.homaris.com" target="_blank">Homaris (private)</a> (3 nts · Berlin agency, Munich apt)</td><td class="r confirmed-amt">$5,171.50</td><td class="m">7-way · $738.79/pp</td><td><span class="badge badge-green">Paid · 5 others owe $738.79 ea</span></td></tr>
+      <tr><td><strong>Zach &amp; Taylor</strong></td><td>Flights — outbound <a href="https://www.united.com" target="_blank">UA 52</a> IAD→ZRH (award · 7 pax)</td><td class="r confirmed-amt">$39.20</td><td class="m">$5.60/pax</td><td><span class="badge badge-green">Paid · Venture X</span></td></tr>
+      <tr><td><strong>Zach &amp; Taylor</strong></td><td>Flights — return <a href="https://www.aircanada.com" target="_blank">Air Canada</a> ZRH→FRA→IAD (6 pax)</td><td class="r confirmed-amt">$970.50</td><td class="m">$161.75/pax</td><td><span class="badge badge-green">Paid · Venture X</span></td></tr>
+      <tr class="subtotal-row"><td colspan="2">Fronted by Zach &amp; Taylor (shared Venture X)</td><td class="r">$6,181.20</td><td colspan="2">Lodging $5,171.50 · flights $1,009.70 · other 5 travelers owe ~<strong>$4,369</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="note-box"><strong>Next step:</strong> get all 7 on <a href="https://www.splitwise.com" target="_blank">Splitwise</a>. Lodging + flights are <strong>paid</strong> on Zach &amp; Taylor's shared Venture X. As a couple they've covered their own 2 shares, so the <strong>other 5 travelers</strong> settle up with them: $738.79 each for Munich lodging, plus the 4 others on the return owe $167.35 for flights and Tanner owes $5.60 (his return airfare still pending). Net so far: ~<strong>$4,369</strong> owed back to Zach &amp; Taylor. Add trains, Eagle's Nest, Swiss Pass and remaining hotels here as they're booked and let Splitwise auto-balance. <em>Note: the cost estimate values the award outbound at ~$250/pax in miles — that's trip value, not cash, so it isn't part of this settle-up (actual cash fronted = $1,009.70).</em></div>
+</div>
+
+<!-- ACTION ITEMS -->
+<div class="card">
+  <div class="card-title">Action Items by Priority</div>
+  <div class="action-row"><div class="action-dot dot-red"></div><div class="action-body"><div class="action-title">Book Lederhosen &amp; Dirndl — <a href="https://bavarian-outfitters.de/en/" target="_blank">Bavarian Outfitters</a></div><div class="action-detail">7 outfits. Lederhosen set €49.90 · Dirndl €42.90. Reserve online now at Bayerstraße 22 location. Pick up Sep 18 PM, return Sep 21 AM.</div></div><div class="action-meta"><span class="urgency urgency-now">Do now</span><span class="action-who">Zach</span></div></div>
+  <div class="action-row"><div class="action-dot dot-red"></div><div class="action-body"><div class="action-title">Book Eagle's Nest private transfer — <a href="https://bavarian-outfitters.de/en/" target="_blank">Bavarian Outfitters</a></div><div class="action-detail">Sep 22 · Salzburg pickup · 7 people · ~$530. Eagle's Nest bus slots sell out fast. Sep 22 is Oktoberfest opening weekend.</div></div><div class="action-meta"><span class="urgency urgency-now">Do now</span><span class="action-who">Zach / TBD</span></div></div>
+  <div class="action-row"><div class="action-dot dot-red"></div><div class="action-body"><div class="action-title">Verify <a href="https://www.aircanada.com" target="_blank">Air Canada return</a> — conf (private)</div><div class="action-detail">Modified Jun 16 — confirm final routing, flight times, and all 7 passengers confirmed. ZRH dep 13:25 Sep 26.</div></div><div class="action-meta"><span class="urgency urgency-now">Do now</span><span class="action-who">TJ / Zach</span></div></div>
+  <div class="action-row"><div class="action-dot dot-red"></div><div class="action-body"><div class="action-title">Decide Lauterbrunnen vs. Wengen → Book hotel</div><div class="action-detail">Sep 24 night. Swiss alpine accommodation in September fills fast. Lauterbrunnen recommended for group of 7 with luggage.</div></div><div class="action-meta"><span class="urgency urgency-now">Do now</span><span class="action-who">Group</span></div></div>
+  <div class="action-row"><div class="action-dot dot-red"></div><div class="action-body"><div class="action-title">Confirm Munich Homaris property name + address</div><div class="action-detail">Res (private) · Check Homaris account. Needed for Sep 18 logistics and early bag-drop request to host.</div></div><div class="action-meta"><span class="urgency urgency-now">Do now</span><span class="action-who">Zach</span></div></div>
+  <div class="action-row"><div class="action-dot dot-amber"></div><div class="action-body"><div class="action-title">Book Zürich hotel — Sep 17 (3 rooms)</div><div class="action-detail">Top rec: <a href="https://www.citizenm.com/hotels/europe/zurich/zurich-hotel" target="_blank">citizenM Zürich</a> (~$180–$250/room, Marriott Bonvoy). Alt: <a href="https://www.kayak.com/Zurich-Hotels-Zurich-Marriott-Hotel.49265.ksp" target="_blank">Zürich Marriott</a> or <a href="https://www.marriott.com/hotels/travel/zrhrt-renaissance-zurich-tower-hotel/" target="_blank">Renaissance Tower</a>.</div></div><div class="action-meta"><span class="urgency urgency-soon">This month</span><span class="action-who">TBD</span></div></div>
+  <div class="action-row"><div class="action-dot dot-amber"></div><div class="action-body"><div class="action-title">Book Salzburg hotel — 2 nights (Sep 21–23)</div><div class="action-detail">⭐ Flagged candidate: <a href="https://www.booking.com/hotel/at/zumhirschen.html" target="_blank">Design Hotel zum Hirschen</a> (4★, Elisabethstraße 5, ~5-min walk from Hbf, ~20-min walk to Old Town, from ~€70–118/rm). Alternates: IMLAUER Hotel Pitter or Holiday Inn City.</div></div><div class="action-meta"><span class="urgency urgency-soon">This month</span><span class="action-who">TBD</span></div></div>
+  <div class="action-row"><div class="action-dot dot-amber"></div><div class="action-body"><div class="action-title">Book Zürich departure hotel — Sep 25 (3 rooms)</div><div class="action-detail">Near Hauptbahnhof. Same property as Sep 17 if available — simplifies the trip for two Zürich stays.</div></div><div class="action-meta"><span class="urgency urgency-soon">This month</span><span class="action-who">TBD</span></div></div>
+  <div class="action-row"><div class="action-dot dot-amber"></div><div class="action-body"><div class="action-title">Book <a href="https://www.motel-one.com/en/hotels/innsbruck/" target="_blank">Innsbruck hotel</a> — 1 night (Sep 23)</div><div class="action-detail">Motel One Innsbruck: next to HBF, walking distance to Old Town, great value for groups.</div></div><div class="action-meta"><span class="urgency urgency-soon">This month</span><span class="action-who">TBD</span></div></div>
+  <div class="action-row"><div class="action-dot dot-amber"></div><div class="action-body"><div class="action-title">Set up Splitwise for group cost-splitting</div><div class="action-detail">Get all 7 on the platform before the first group payment. Tracks who fronted what and auto-calculates the settle-up.</div></div><div class="action-meta"><span class="urgency urgency-soon">This month</span><span class="action-who">Everyone</span></div></div>
+  <div class="action-row"><div class="action-dot dot-amber"></div><div class="action-body"><div class="action-title">Plan Oktoberfest tent strategy for Sep 19 &amp; 20</div><div class="action-detail">Opening Day Sep 19: arrive by 8:00 AM, no reservation needed if early. <a href="https://www.oktoberfest.de/en/tents/" target="_blank">Hofbräu vs. Augustiner</a>. Group of 7 — claim a table end together.</div></div><div class="action-meta"><span class="urgency urgency-soon">Before July</span><span class="action-who">Group</span></div></div>
+  <div class="action-row"><div class="action-dot dot-green"></div><div class="action-body"><div class="action-title">Download train apps: <a href="https://www.bahn.de/service/mobile/db-navigator" target="_blank">DB Navigator</a> · <a href="https://www.oebb.at/en/reiseplanung-services/mobile-apps/oebb-app" target="_blank">ÖBB</a> · <a href="https://www.sbb.ch/en/timetable/mobile-apps/sbb-mobile.html" target="_blank">SBB Mobile</a></div><div class="action-detail">All free on iPhone. All support Apple Wallet digital tickets. Download before leaving home — works offline for timetables.</div></div><div class="action-meta"><span class="urgency urgency-later">Before trip</span><span class="action-who">Everyone</span></div></div>
+  <div class="action-row"><div class="action-dot dot-green"></div><div class="action-body"><div class="action-title">Book all 5 train legs × 7 people</div><div class="action-detail">Opens 3–6 months before travel. Book ASAP — especially ZRH→MUC (Leg 1) and IBK→LAU (Leg 4, complex route). Verify Sep 24 route on <a href="https://www.sbb.ch" target="_blank">SBB.ch</a> once open.</div></div><div class="action-meta"><span class="urgency urgency-later">Mar–Jun 2026</span><span class="action-who">TBD</span></div></div>
+  <div class="action-row"><div class="action-dot dot-green"></div><div class="action-body"><div class="action-title">Purchase <a href="https://www.myswisstravelpass.com" target="_blank">Swiss Travel Pass</a> × 7 people</div><div class="action-detail">3 days consecutive, 2nd class · CHF 254/pp (~$330). Covers all Swiss trains + mountain railway discounts on Männlichen, Mürren, etc.</div></div><div class="action-meta"><span class="urgency urgency-later">Before trip</span><span class="action-who">TBD</span></div></div>
+</div>
+
+<div class="footer">
+  Europe Trip 2026 &nbsp;·&nbsp; Group Planning Dashboard v5 &nbsp;·&nbsp; Last updated June 28, 2026<br>
+  7 travelers &nbsp;·&nbsp; Sep 17–26 &nbsp;·&nbsp; ZRH in / ZRH out &nbsp;·&nbsp; All costs in USD &nbsp;·&nbsp; All-in estimate incl. round-trip airfare<br>
+  Zach + Taylor &nbsp;·&nbsp; Jeremy + Melissa &nbsp;·&nbsp; Alex + Gretchen &nbsp;·&nbsp; Tanner
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+  // Print / Save-PDF button — only enhancement; page is fully functional without JS.
+  document.getElementById('printBtn').addEventListener('click',function(){window.print();});
+
+/* ===== Interactive engine: tagging, filters, Leaflet, scroll-spy ===== */
+(function(){
+  var DAYS={zurich:[17,18,25,26],munich:[18,19,20,21],salzburg:[21,22,23],innsbruck:[23,24],alps:[24,25]};
+  function nm(s){return (s||"").toLowerCase();}
+  function cityFromName(t){t=nm(t);
+    if(t.indexOf("zürich")>=0||t.indexOf("zurich")>=0)return "zurich";
+    if(t.indexOf("munich")>=0||t.indexOf("münchen")>=0)return "munich";
+    if(t.indexOf("salzburg")>=0)return "salzburg";
+    if(t.indexOf("innsbruck")>=0)return "innsbruck";
+    if(t.indexOf("lauterbrunnen")>=0||t.indexOf("alps")>=0||t.indexOf("wengen")>=0||t.indexOf("mürren")>=0)return "alps";
+    return null;}
+  function setTile(el,city,cat,cities){el.classList.add("f");el.dataset.cat=cat||"info";
+    if(cities&&cities.length){el.dataset.cities=cities.join(",");var d=[];cities.forEach(function(c){(DAYS[c]||[]).forEach(function(x){if(d.indexOf(x)<0)d.push(x);});});el.dataset.days=d.join(",");el.dataset.city=cities.length===1?cities[0]:"multi";}
+    else{el.dataset.city=city||"all";el.dataset.days=(DAYS[city]||[]).join(",");}}
+  var MAP=[
+    {m:"destinations — why",id:"destinations",cat:"info"},
+    {m:"climate & daylight",id:"climate",cat:"info"},
+    {m:"train legs",id:"trains",cat:"travel"},
+    {m:"booking status",id:"bookings",cat:"lodging"},
+    {m:"key decisions",id:"decisions",cat:"lodging"},
+    {m:"oktoberfest pro tips",id:"oktoberfest",cat:"activities",city:"munich"},
+    {m:"group roster",id:"roster",cat:"info"},
+    {m:"arrival gap plan",id:"gap",cat:"travel",city:"munich"},
+    {m:"lederhosen",id:"rentals",cat:"activities",city:"munich"},
+    {m:"inputs needed",id:"inputs",cat:"info"},
+    {m:"full cost estimate",id:"costs",cat:"cost"},
+    {m:"per-person cost",id:"perperson",cat:"cost"},
+    {m:"settle-up ledger",id:"ledger",cat:"cost"},
+    {m:"action items",id:"actions",cat:"info"}
+  ];
+  document.querySelectorAll(".card").forEach(function(card){
+    var t=card.querySelector(".card-title"); if(!t)return; var tt=nm(t.textContent);
+    for(var i=0;i<MAP.length;i++){if(tt.indexOf(MAP[i].m)>=0){var c=MAP[i];card.id=c.id;card.classList.add("sec");setTile(card,c.city||"all",c.cat);break;}}
+  });
+  var mx=document.querySelector(".mx-wrap"); if(mx){mx.id="glance";mx.classList.add("sec");setTile(mx,"all","travel");}
+  document.querySelectorAll(".wx-card").forEach(function(w){var e=w.querySelector(".wx-city");var c=cityFromName(e?e.textContent:"");if(c)setTile(w,c,"info");});
+  var dcard=document.getElementById("destinations");
+  if(dcard)dcard.querySelectorAll(".input-row").forEach(function(r){var e=r.querySelector(".input-title");var c=cityFromName(e?e.textContent:"");if(c)setTile(r,c,"info");});
+  document.querySelectorAll(".legx-card").forEach(function(l){var e=l.querySelector(".legx-route");var rt=e?e.textContent:"";var cs=[];rt.split("→").forEach(function(p){var c=cityFromName(p);if(c&&cs.indexOf(c)<0)cs.push(c);});if(cs.length)setTile(l,null,"travel",cs);});
+  var bcard=document.getElementById("bookings");
+  if(bcard)bcard.querySelectorAll(".check-row").forEach(function(r){var c=cityFromName(r.textContent);setTile(r,c||"all","lodging");});
+
+  var st={loc:null,day:null,cat:null};
+  function pass(el){
+    var city=el.dataset.city, cities=el.dataset.cities?el.dataset.cities.split(","):[city], days=(el.dataset.days||"").split(",");
+    if(st.loc&&city!=="all"&&cities.indexOf(st.loc)<0)return false;
+    if(st.day&&city!=="all"&&days.indexOf(st.day)<0)return false;
+    if(st.cat&&el.dataset.cat!==st.cat)return false;
+    return true;
+  }
+  function apply(){
+    document.querySelectorAll(".f").forEach(function(el){el.classList.toggle("f-hidden",!pass(el));});
+    var secs=document.querySelectorAll(".sec"),vis=0;secs.forEach(function(s){if(!s.classList.contains("f-hidden"))vis++;});
+    var fc=document.getElementById("fcount");if(fc)fc.textContent="Showing "+vis+" of "+secs.length+" sections"+((st.loc||st.day||st.cat)?" · filtered":"");
+  }
+  function syncChips(){document.querySelectorAll(".fchip").forEach(function(ch){ch.classList.toggle("active",st[ch.dataset.dim]===ch.dataset.val);});}
+  window.coworkFilter=function(loc){st.loc=(st.loc===loc?null:loc);syncChips();apply();var m=document.getElementById("map");if(m)m.scrollIntoView({behavior:"smooth",block:"start"});};
+  document.querySelectorAll(".fchip").forEach(function(ch){ch.addEventListener("click",function(){var d=ch.dataset.dim,v=ch.dataset.val;st[d]=(st[d]===v?null:v);syncChips();apply();});});
+  var rb=document.getElementById("freset");if(rb)rb.addEventListener("click",function(){st={loc:null,day:null,cat:null};syncChips();apply();});
+  apply();
+
+  if(window.L){
+    var C=[
+      {k:"zurich",n:"Zürich",ll:[47.3769,8.5417],d:"Sep 17–18 · 25–26",v:"🏞 Lakeside reset · ✈ in & out",h:"Hotel TBD (citizenM rec)"},
+      {k:"munich",n:"Munich",ll:[48.1351,11.5820],d:"Sep 18–21",v:"🍺 Oktoberfest · meet Caroline & Anton",h:"Homaris ✓ booked"},
+      {k:"salzburg",n:"Salzburg",ll:[47.8095,13.0550],d:"Sep 21–23",v:"🏰 Old Town · Eagle’s Nest base",h:"zum Hirschen flagged"},
+      {k:"innsbruck",n:"Innsbruck",ll:[47.2692,11.4041],d:"Sep 23–24",v:"🏔 Nordkette · Golden Roof",h:"Motel One rec"},
+      {k:"alps",n:"Lauterbrunnen · Swiss Alps",ll:[46.5934,7.9089],d:"Sep 24–25",v:"🏔 Mountain views · Männlichen",h:"TBD"}
+    ];
+    var map=L.map("leafmap",{scrollWheelZoom:false}).setView([47.4,10.6],6);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"}).addTo(map);
+    var pts=C.map(function(c){return c.ll;});pts.push(C[0].ll);
+    L.polyline(pts,{color:"#7C6CFF",weight:3,opacity:.85,dashArray:"7 8"}).addTo(map);
+    var grp=[];
+    C.forEach(function(c,i){
+      L.marker(c.ll).addTo(map).bindPopup(`<div class="lp-name">${i+1}. ${c.n}</div><div class="lp-dates">${c.d}</div><div class="lp-vibe">${c.v}<br>🏨 ${c.h}</div><div class="lp-btn" onclick="coworkFilter('${c.k}')">Filter page to ${c.n} →</div>`);
+      grp.push(c.ll);
+    });
+    [["🍺 Oktoberfest (Theresienwiese)",[48.1316,11.5497]],["🦅 Eagle’s Nest (Kehlstein)",[47.6110,13.0410]],["✈ ZRH Airport",[47.4583,8.5556]]].forEach(function(p){
+      L.circleMarker(p[1],{radius:5,color:"#B8860B",fillColor:"#FAC775",fillOpacity:.95,weight:1}).addTo(map).bindPopup(`<div class="lp-name">${p[0]}</div>`);
+    });
+    map.fitBounds(grp,{padding:[45,45]});
+    setTimeout(function(){map.invalidateSize();},250);
+  }
+
+  var navlinks=document.querySelectorAll(".topnav a");
+  window.addEventListener("scroll",function(){
+    var y=window.scrollY+150,cur="";
+    navlinks.forEach(function(a){var t=document.querySelector(a.getAttribute("href"));if(t&&t.offsetTop<=y)cur=a.getAttribute("href");});
+    navlinks.forEach(function(a){a.style.color=(a.getAttribute("href")===cur)?"#fff":"";});
+  },{passive:true});
+})();
+
+</script>
+</body>
+</html>
